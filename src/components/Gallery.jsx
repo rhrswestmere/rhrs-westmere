@@ -58,7 +58,7 @@ export default function Gallery() {
   useEffect(() => {
     let cancelled = false
     getJSON('/api/gallery')
-      .then((data) => { if (!cancelled) setPhotos(data) })
+      .then((data) => { if (!cancelled) setPhotos(Array.isArray(data) ? data : []) })
       .catch((err) => { if (!cancelled) setError(err.message) })
       .finally(() => { if (!cancelled) setLoading(false) })
     return () => { cancelled = true }

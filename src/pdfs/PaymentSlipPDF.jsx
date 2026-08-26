@@ -290,16 +290,8 @@ export default function PaymentSlipPDF({ data }) {
         </Text>
 
         <View style={styles.signatureRow}>
-          <View style={styles.signatureBox}>
-            <View style={styles.signatureLine} />
-            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-              <Text style={styles.signatureDeva}>सचिव</Text>
-              <Text style={styles.signatureName}> / Secretary</Text>
-            </View>
-            <Text style={styles.signatureRole}>Rashtriya Hindu Rakshak Sangh</Text>
-          </View>
-          <View style={styles.signatureBox}>
-            <View style={styles.signatureLine} />
+          <View style={[styles.signatureBox, { width: '100%', alignItems: 'flex-end' }]}>
+            <View style={[styles.signatureLine, { width: '42%' }]} />
             <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
               <Text style={styles.signatureDeva}>अध्यक्ष</Text>
               <Text style={styles.signatureName}> / President</Text>
