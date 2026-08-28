@@ -1,308 +1,108 @@
-import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer'
+import { Page, Text, View, Document, Image } from '@react-pdf/renderer'
 import { amountInWords } from './amountWords'
 
 const C = {
   saffron: '#DE651A',
   saffronDeep: '#C0550A',
-  saffronLight: '#FF8C38',
   saffronBg: '#FFF3E8',
   gold: '#B8973A',
-  goldLight: '#D4B86A',
   ink: '#1A1100',
   inkSoft: '#3A3020',
   inkMuted: '#7A6F5A',
   border: '#E8E0D4',
-  white: '#FFFFFF',
 }
 
-const styles = StyleSheet.create({
-  page: {
-    padding: 34,
-    paddingTop: 28,
-    fontFamily: 'Helvetica',
-    color: C.ink,
-    fontSize: 10,
-    lineHeight: 1.5,
-    backgroundColor: C.white,
-  },
-  headerBand: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: C.saffron,
-    paddingBottom: 12,
-    marginBottom: 18,
-  },
-  logo: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: C.saffron,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  om: {
-    fontFamily: 'NotoDeva',
-    fontSize: 24,
-    color: C.white,
-  },
-  logoImg: {
-    width: 36,
-    height: 36,
-    objectFit: 'contain',
-  },
-  orgBlock: {
-    marginLeft: 12,
-    flex: 1,
-  },
-  orgEn: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    letterSpacing: 0.5,
-    color: C.ink,
-  },
-  orgDeva: {
-    fontFamily: 'NotoDeva',
-    fontSize: 10,
-    color: C.saffron,
-    marginTop: 2,
-  },
-  orgTagline: {
-    fontSize: 7,
-    color: C.inkMuted,
-    letterSpacing: 1,
-    marginTop: 3,
-  },
-  titleBox: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  titleEn: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    letterSpacing: 2,
-    color: C.saffronDeep,
-  },
-  titleDeva: {
-    fontFamily: 'NotoDeva',
-    fontSize: 11,
-    color: C.inkMuted,
-    marginTop: 4,
-  },
-  rule: {
-    width: 70,
-    height: 2,
-    backgroundColor: C.gold,
-    marginTop: 8,
-  },
-  metaRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 22,
-    backgroundColor: C.saffronBg,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderLeftWidth: 3,
-    borderLeftColor: C.saffron,
-  },
-  metaLabel: {
-    fontSize: 7,
-    color: C.inkMuted,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  metaValue: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: C.ink,
-    marginTop: 2,
-  },
-  bodyText: {
-    fontSize: 10.5,
-    color: C.inkSoft,
-    marginBottom: 12,
-    textAlign: 'justify',
-  },
-  bodyDeva: {
-    fontFamily: 'NotoDeva',
-    fontSize: 10,
-    color: C.inkMuted,
-    marginBottom: 14,
-  },
-  detailsBox: {
-    borderWidth: 1,
-    borderColor: C.border,
-    marginVertical: 8,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: C.border,
-  },
-  detailLabel: {
-    width: 130,
-    fontSize: 8,
-    fontWeight: 'bold',
-    color: C.inkMuted,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    paddingVertical: 7,
-    paddingLeft: 10,
-    backgroundColor: C.saffronBg,
-  },
-  detailValue: {
-    flex: 1,
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: C.ink,
-    paddingVertical: 7,
-    paddingLeft: 10,
-  },
-  terms: {
-    fontSize: 7.5,
-    color: C.inkMuted,
-    marginTop: 14,
-    lineHeight: 1.6,
-  },
-  signatureRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 46,
-  },
-  signatureBox: {
-    width: '42%',
-  },
-  signatureLine: {
-    borderBottomWidth: 1,
-    borderBottomColor: C.ink,
-    marginBottom: 5,
-  },
-  signatureName: {
-    fontSize: 9,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 4,
-  },
-  signatureDeva: {
-    fontFamily: 'NotoDeva',
-    fontSize: 9,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  signatureRole: {
-    fontSize: 7.5,
-    color: C.inkMuted,
-    textAlign: 'center',
-    marginTop: 2,
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 22,
-    left: 34,
-    right: 34,
-    borderTopWidth: 1,
-    borderTopColor: C.border,
-    paddingTop: 6,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    fontSize: 6.5,
-    color: C.inkMuted,
-  },
-})
+const P = (mm) => Number((mm * 2.834645669).toFixed(2))
 
-export default function PaymentSlipPDF({ data }) {
+export default function PaymentSlipPDF({ data, bgImage }) {
   const today = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
   const amount = Number(data.amount)
   const formatted = new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(amount)
 
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
-        <View style={styles.headerBand}>
-          <View style={styles.logo}>
-            <Image src="/logo.png" style={styles.logoImg} />
-          </View>
-          <View style={styles.orgBlock}>
-            <Text style={styles.orgEn}>RASHTRIYA HINDU RAKSHAK SANGH</Text>
-            <Text style={styles.orgDeva}>राष्ट्रीय हिन्दू रक्षक संघ</Text>
-            <Text style={styles.orgTagline}>HERITAGE · SERVICE · UNITY</Text>
-          </View>
-        </View>
+      <Page size="A4" style={{ margin: 0, padding: 0 }}>
+        <View style={{ width: P(210), height: P(297) }}>
+          {bgImage && (
+            <Image src={bgImage} style={{ width: P(210), height: P(296) }} />
+          )}
 
-        <View style={styles.titleBox}>
-          <Text style={styles.titleEn}>DONATION PAYMENT SLIP</Text>
-          <Text style={styles.titleDeva}>दान भुगतान पर्ची</Text>
-          <View style={styles.rule} />
-        </View>
+          <View style={{
+            position: 'absolute',
+            left: P(25), top: P(90),
+            width: P(160), height: P(170),
+          }}>
 
-        <View style={styles.metaRow}>
-          <View>
-            <Text style={styles.metaLabel}>Receipt No.</Text>
-            <Text style={styles.metaValue}>{data.receipt_no}</Text>
-          </View>
-          <View>
-            <Text style={styles.metaLabel}>Date of Issue</Text>
-            <Text style={styles.metaValue}>{today}</Text>
-          </View>
-        </View>
-
-        <Text style={styles.bodyText}>
-          This is to certify that Shri/Smt/Kum. <Text style={{ fontWeight: 'bold' }}>{data.donor_name}</Text> has made a
-          donation of <Text style={{ fontWeight: 'bold' }}>₹ {formatted}</Text> ({amountInWords(amount)}) to Rashtriya
-          Hindu Rakshak Sangh on <Text style={{ fontWeight: 'bold' }}>{today}</Text> towards{' '}
-          <Text style={{ fontWeight: 'bold' }}>{data.donation_type}</Text>.
-        </Text>
-        <Text style={styles.bodyDeva}>
-          प्रमाणित किया जाता है कि श्री/श्रीमती {data.donor_name} ने दिनांक {today} को राष्ट्रीय हिन्दू रक्षक संघ को{' '}
-          {data.donation_type} हेतु ₹ {formatted} की दान राशि प्रदान की है।
-        </Text>
-
-        <View style={styles.detailsBox}>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Receipt No.</Text>
-            <Text style={styles.detailValue}>{data.receipt_no}</Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Donor Name</Text>
-            <Text style={styles.detailValue}>{data.donor_name}</Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Donation Type</Text>
-            <Text style={styles.detailValue}>{data.donation_type}</Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Amount</Text>
-            <Text style={[styles.detailValue, { color: C.saffronDeep }]}>₹ {formatted}</Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Payment Mode</Text>
-            <Text style={styles.detailValue}>{data.payment_mode}</Text>
-          </View>
-          <View style={[styles.detailRow, { borderBottomWidth: 0 }]}>
-            <Text style={styles.detailLabel}>Txn / UPI Ref</Text>
-            <Text style={styles.detailValue}>{data.txn_ref}</Text>
-          </View>
-        </View>
-
-        <Text style={styles.terms}>
-          Kindly preserve this receipt for your records. This is a computer-generated receipt issued against the
-          donation made as mentioned above and serves as the official proof of the donation.
-        </Text>
-
-        <View style={styles.signatureRow}>
-          <View style={[styles.signatureBox, { width: '100%', alignItems: 'flex-end' }]}>
-            <View style={[styles.signatureLine, { width: '42%' }]} />
-            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-              <Text style={styles.signatureDeva}>अध्यक्ष</Text>
-              <Text style={styles.signatureName}> / President</Text>
+            <View style={{ alignItems: 'center', marginBottom: 14 }}>
+              <Text style={{ fontSize: 13, fontWeight: 'bold', letterSpacing: 2, color: C.saffronDeep }}>
+                DONATION PAYMENT SLIP
+              </Text>
+              <Text style={{ fontFamily: 'NotoDeva', fontSize: 10, color: C.inkMuted, marginTop: 3 }}>
+                दान भुगतान पर्ची
+              </Text>
+              <View style={{ width: 60, height: 2, backgroundColor: C.gold, marginTop: 6 }} />
             </View>
-            <Text style={styles.signatureRole}>Rashtriya Hindu Rakshak Sangh</Text>
-          </View>
-        </View>
 
-        <View style={styles.footer}>
-          <Text>RHRS · Heritage | Service | Unity</Text>
-          <Text>rhrsdemo2.vercel.app</Text>
+            <View style={{
+              flexDirection: 'row', justifyContent: 'space-between', marginBottom: 14,
+              backgroundColor: C.saffronBg, paddingVertical: 6, paddingHorizontal: 10,
+              borderLeftWidth: 3, borderLeftColor: C.saffron,
+            }}>
+              <View>
+                <Text style={{ fontSize: 6.5, color: C.inkMuted, textTransform: 'uppercase', letterSpacing: 1 }}>Receipt No.</Text>
+                <Text style={{ fontSize: 9, fontWeight: 'bold', color: C.ink, marginTop: 1 }}>{data.receipt_no}</Text>
+              </View>
+              <View>
+                <Text style={{ fontSize: 6.5, color: C.inkMuted, textTransform: 'uppercase', letterSpacing: 1 }}>Date of Issue</Text>
+                <Text style={{ fontSize: 9, fontWeight: 'bold', color: C.ink, marginTop: 1 }}>{today}</Text>
+              </View>
+            </View>
+
+            <Text style={{ fontSize: 9.5, color: C.inkSoft, marginBottom: 8, textAlign: 'justify', lineHeight: 1.5 }}>
+              This is to certify that Shri/Smt/Kum. <Text style={{ fontWeight: 'bold' }}>{data.donor_name}</Text> has made a
+              donation of <Text style={{ fontWeight: 'bold' }}>₹ {formatted}</Text> ({amountInWords(amount)}) to Rashtriya
+              Hindu Rakshak Sangh on <Text style={{ fontWeight: 'bold' }}>{today}</Text> towards{' '}
+              <Text style={{ fontWeight: 'bold' }}>{data.donation_type}</Text>.
+            </Text>
+
+            <Text style={{ fontFamily: 'NotoDeva', fontSize: 9, color: C.inkMuted, marginBottom: 10, lineHeight: 1.5, textAlign: 'justify' }}>
+              प्रमाणित किया जाता है कि श्री/श्रीमती {data.donor_name} ने दिनांक {today} को राष्ट्रीय हिन्दू रक्षक संघ को{' '}
+              {data.donation_type} हेतु ₹ {formatted} की दान राशि प्रदान की है।
+            </Text>
+
+            <View style={{ borderWidth: 1, borderColor: C.border, marginBottom: 10 }}>
+              {[
+                ['Receipt No.', data.receipt_no],
+                ['Donor Name', data.donor_name],
+                ['Donation Type', data.donation_type],
+                ['Amount', `₹ ${formatted}`],
+                ['Payment Mode', data.payment_mode],
+                ['Txn / UPI Ref', data.txn_ref],
+              ].map(([label, value], i) => (
+                <View key={i} style={{ flexDirection: 'row', borderBottomWidth: i < 5 ? 1 : 0, borderBottomColor: C.border }}>
+                  <Text style={{ width: 120, fontSize: 7.5, fontWeight: 'bold', color: C.inkMuted, textTransform: 'uppercase', letterSpacing: 0.5, paddingVertical: 5, paddingLeft: 8, backgroundColor: C.saffronBg }}>{label}</Text>
+                  <Text style={{ flex: 1, fontSize: 9, fontWeight: 'bold', color: label === 'Amount' ? C.saffronDeep : C.ink, paddingVertical: 5, paddingLeft: 8 }}>{value}</Text>
+                </View>
+              ))}
+            </View>
+
+            <Text style={{ fontSize: 7, color: C.inkMuted, lineHeight: 1.5, marginBottom: 16 }}>
+              Kindly preserve this receipt for your records. This is a computer-generated receipt issued against the
+              donation made as mentioned above and serves as the official proof of the donation.
+            </Text>
+
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+              <View style={{ width: '45%' }}>
+                <View style={{ borderBottomWidth: 1, borderBottomColor: C.ink, marginBottom: 4 }} />
+                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                  <Text style={{ fontFamily: 'NotoDeva', fontSize: 8.5, fontWeight: 'bold' }}>अध्यक्ष</Text>
+                  <Text style={{ fontSize: 8.5, fontWeight: 'bold' }}> / President</Text>
+                </View>
+                <Text style={{ fontSize: 7, color: C.inkMuted, textAlign: 'center', marginTop: 1 }}>Rashtriya Hindu Rakshak Sangh</Text>
+              </View>
+            </View>
+
+          </View>
         </View>
       </Page>
     </Document>

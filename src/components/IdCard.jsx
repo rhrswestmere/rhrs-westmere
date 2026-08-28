@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { postJSON } from '../lib/api'
-import { pdfUrl } from '../pdfs/utils'
+import { pdfUrl, fetchImageBase64 } from '../pdfs/utils'
 
 function useSubmit(endpoint) {
   const [loading, setLoading] = useState(false)
@@ -106,13 +106,17 @@ function usePdf() {
     setPdfError('')
   }
 
-  const generate = async (loader, data) => {
+  const generate = async (loader, data, imageUrl) => {
     clear()
     setPdfBusy(true)
     try {
+      let bgImage = null
+      if (imageUrl) {
+        bgImage = await fetchImageBase64(imageUrl)
+      }
       const mod = await loader()
       const Component = mod.default
-      const url = await pdfUrl(<Component data={data} />)
+      const url = await pdfUrl(<Component data={data} bgImage={bgImage} />)
       setPdf(url)
     } catch (err) {
       console.error('PDF generation failed:', err)
@@ -245,7 +249,7 @@ function AppointmentForm() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const data = await submit(form)
-    if (data) generate(() => import('../pdfs/AppointmentPDF'), data)
+    if (data) generate(() => import('../pdfs/AppointmentPDF'), data, '/appointment-bg.jpg')
   }
 
   const handleReset = () => {
@@ -323,7 +327,7 @@ function PaymentForm({ pendingAmount }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const data = await submit({ ...form, amount: Number(form.amount) })
-    if (data) generate(() => import('../pdfs/PaymentSlipPDF'), data)
+    if (data) generate(() => import('../pdfs/PaymentSlipPDF'), data, '/appointment-bg.jpg')
   }
 
   const handleReset = () => {
