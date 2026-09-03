@@ -1,14 +1,11 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 
-const qrPattern = [1,0,1,1,0,1,0, 0,1,0,0,1,0,1, 1,0,1,0,1,0,0, 0,1,0,1,0,1,0, 1,0,1,1,0,1,0, 0,1,0,0,1,0,1, 1,0,1,0,1,0,0]
-
 const bankDetails = [
-  { label: 'Account Name', value: 'RASHTRIYA HINDU RAKSHAK SANGH' },
-  { label: 'Account Number', value: '12345678901', mono: true },
-  { label: 'IFSC Code', value: 'SBIN0001234', mono: true },
-  { label: 'Bank', value: 'State Bank of India' },
-  { label: 'UPI ID', value: 'rhns@upi', mono: true },
+  { label: 'Account Name', value: 'RHRS Foundation' },
+  { label: 'Account Number', value: '1649104000139816', mono: true },
+  { label: 'IFSC Code', value: 'IBKL0001649', mono: true },
+  { label: 'Bank', value: 'IDBI Bank' },
 ]
 
 const reasons = [
@@ -70,11 +67,7 @@ export default function Donate() {
             <div className="border border-saffron/30 rounded-sm p-6 lg:p-8 bg-gradient-to-br from-ivory to-saffron-bg">
               <h3 className="font-heading text-lg font-bold text-ink text-center mb-6">Scan to Donate</h3>
               <div className="w-44 h-44 mx-auto bg-white border-2 border-border mb-5 flex items-center justify-center p-2">
-                <div className="grid grid-cols-7 gap-[2px] w-full h-full">
-                  {qrPattern.map((v, i) => (
-                    <div key={i} className={`${v ? 'bg-ink' : 'bg-white'} border border-border/10`} />
-                  ))}
-                </div>
+                <img src="/qr-code.png" alt="UPI QR Code" className="w-full h-full object-contain" />
               </div>
               <p className="text-xs text-ink-muted text-center mb-5">Scan with any UPI app (GPay · PhonePe · PayTM)</p>
               <p className="font-deva text-saffron text-sm font-semibold text-center mb-6">ॐ दानाद् धर्मः प्रवर्तते</p>

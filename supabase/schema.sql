@@ -97,6 +97,18 @@ create table if not exists gallery_photos (
   created_at timestamptz not null default now()
 );
 
+-- Emergency helplines (managed from admin panel)
+create table if not exists helplines (
+  id uuid primary key default gen_random_uuid(),
+  label text not null,
+  number text not null,
+  description text default '',
+  icon text default '✦',
+  sort_order integer,
+  is_visible boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
 -- Storage bucket for gallery images (public read)
 insert into storage.buckets (id, name, public)
 values ('gallery', 'gallery', true)
@@ -109,5 +121,6 @@ alter table appointments enable row level security;
 alter table payments enable row level security;
 alter table parikshan_registrations enable row level security;
 alter table gallery_photos enable row level security;
+alter table helplines enable row level security;
 alter table sequences enable row level security;
 alter table admin_config enable row level security;

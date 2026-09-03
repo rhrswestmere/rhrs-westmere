@@ -14,6 +14,11 @@ export const searchMembers = (token, q) => sendJSON('/api/admin/members', 'POST'
 export const assignDesignation = (token, id, payload) => sendJSON(`/api/admin/members/${id}/designation`, 'POST', payload, token)
 export const removeDesignation = (token, id) => sendJSON(`/api/admin/members/${id}/designation`, 'DELETE', {}, token)
 
+export const getHelplines = (token) => getJSON('/api/admin/helplines', token)
+export const addHelpline = (token, payload) => sendJSON('/api/admin/helplines', 'POST', payload, token)
+export const updateHelpline = (token, id, payload) => sendJSON(`/api/admin/helplines/${id}`, 'PATCH', payload, token)
+export const deleteHelpline = (token, id) => sendJSON(`/api/admin/helplines/${id}`, 'DELETE', {}, token)
+
 export async function uploadToSignedUrl(signedUrl, file) {
   const res = await fetch(signedUrl, {
     method: 'PUT',

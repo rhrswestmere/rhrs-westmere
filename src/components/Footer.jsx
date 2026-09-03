@@ -1,7 +1,25 @@
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 
+const FALLBACK_HELPLINES = [
+  { label: 'National Helpline', number: '1800-123-HELP' },
+  { label: 'Women Protection', number: '+91 99999-11111' },
+  { label: 'Cultural Rights', number: '+91 99999-22222' },
+  { label: 'Disaster Relief', number: '+91 99999-33333' },
+]
+
 export default function Footer() {
+  const [helplines, setHelplines] = useState(FALLBACK_HELPLINES)
+
+  useEffect(() => {
+    fetch('/api/helplines')
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) setHelplines(data)
+      })
+      .catch(() => {})
+  }, [])
   return (
     <footer className="bg-ink">
       <div className="section-divider" />
@@ -31,15 +49,10 @@ export default function Footer() {
           <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="lg:col-span-3">
             <p className="text-xs font-bold text-saffron uppercase tracking-wider mb-4">◈ Helpline</p>
             <div className="space-y-2.5">
-              {[
-                { label: 'National Helpline', num: '1800-123-HELP' },
-                { label: 'Women Protection', num: '+91 99999-11111' },
-                { label: 'Cultural Rights', num: '+91 99999-22222' },
-                { label: 'Disaster Relief', num: '+91 99999-33333' },
-              ].map((h) => (
-                <div key={h.label}>
+              {helplines.map((h) => (
+                <div key={h.id || h.label}>
                   <p className="text-[9px] text-white/25">{h.label}</p>
-                  <p className="text-sm font-bold text-saffron-light">{h.num}</p>
+                  <p className="text-sm font-bold text-saffron-light">{h.number}</p>
                 </div>
               ))}
             </div>

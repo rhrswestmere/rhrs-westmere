@@ -1,13 +1,25 @@
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 
-const helplines = [
-  { number: '1800-123-HELP (4357)', label: 'National Helpline', icon: '✦', desc: '24×7 Free Legal & Emergency Aid' },
-  { number: '+91 99999-11111', label: 'Women Protection', icon: '◈', desc: 'Immediate assistance for women in distress' },
-  { number: '+91 99999-22222', label: 'Cultural Rights', icon: '◇', desc: 'Report temple desecration & hate crimes' },
-  { number: '+91 99999-33333', label: 'Disaster Relief', icon: '▣', desc: 'Flood, earthquake & calamity response' },
+const FALLBACK = [
+  { number: '1800-123-HELP (4357)', label: 'National Helpline', icon: '✦', description: '24×7 Free Legal & Emergency Aid' },
+  { number: '+91 99999-11111', label: 'Women Protection', icon: '◈', description: 'Immediate assistance for women in distress' },
+  { number: '+91 99999-22222', label: 'Cultural Rights', icon: '◇', description: 'Report temple desecration & hate crimes' },
+  { number: '+91 99999-33333', label: 'Disaster Relief', icon: '▣', description: 'Flood, earthquake & calamity response' },
 ]
 
 export default function Helpline() {
+  const [helplines, setHelplines] = useState(FALLBACK)
+
+  useEffect(() => {
+    fetch('/api/helplines')
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) setHelplines(data)
+      })
+      .catch(() => {})
+  }, [])
+
   return (
     <section id="helpline" style={{ background: 'linear-gradient(180deg, #1A1100 0%, #2A1F0A 50%, #1A1100 100%)' }}>
       <div className="section-divider" />
@@ -20,12 +32,12 @@ export default function Helpline() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
           {helplines.map((item, i) => (
-            <motion.div key={item.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
+            <motion.div key={item.id || item.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
               className="group border border-saffron/15 hover:border-saffron/40 rounded-sm p-6 lg:p-8 text-center cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" style={{ background: 'rgba(255,255,255,0.04)' }}>
               <span className="text-saffron-light/60 text-3xl block mb-4 transition-transform duration-300 group-hover:scale-110">{item.icon}</span>
               <h3 className="text-saffron-light text-xs font-bold uppercase tracking-wider mb-2">{item.label}</h3>
               <p className="font-heading text-lg lg:text-xl font-bold text-white mb-2 tracking-wide">{item.number}</p>
-              <p className="text-sm text-white/25">{item.desc}</p>
+              <p className="text-sm text-white/25">{item.description}</p>
             </motion.div>
           ))}
         </div>
