@@ -1,12 +1,62 @@
 [build]
   command = "npm run build"
   publish = "dist"
+  functions = "netlify/functions"
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from = "/api/helplines"
+  to = "/.netlify/functions/helplines"
   status = 200
-  conditions = {Role = ["admin"]}
+
+[[redirects]]
+  from = "/api/gallery"
+  to = "/.netlify/functions/gallery"
+  status = 200
+
+[[redirects]]
+  from = "/api/members"
+  to = "/.netlify/functions/members"
+  status = 200
+
+[[redirects]]
+  from = "/api/appointments"
+  to = "/.netlify/functions/appointments"
+  status = 200
+
+[[redirects]]
+  from = "/api/payments"
+  to = "/.netlify/functions/payments"
+  status = 200
+
+[[redirects]]
+  from = "/api/login"
+  to = "/.netlify/functions/login"
+  status = 200
+
+[[redirects]]
+  from = "/api/admin/gallery"
+  to = "/.netlify/functions/admin-gallery"
+  status = 200
+
+[[redirects]]
+  from = "/api/admin/helplines"
+  to = "/.netlify/functions/admin-helplines"
+  status = 200
+
+[[redirects]]
+  from = "/api/admin/members"
+  to = "/.netlify/functions/admin-members"
+  status = 200
+
+[[redirects]]
+  from = "/api/admin/records"
+  to = "/.netlify/functions/admin-records"
+  status = 200
+
+[[redirects]]
+  from = "/api/admin/upload-url"
+  to = "/.netlify/functions/admin-upload-url"
+  status = 200
 
 [[redirects]]
   from = "/admin/*"
