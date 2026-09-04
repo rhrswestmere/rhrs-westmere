@@ -1,13 +1,32 @@
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 
+const FALLBACK_HELPLINES = [
+  { label: 'National Helpline', number: '1800-123-HELP' },
+  { label: 'Women Protection', number: '+91 99999-11111' },
+  { label: 'Cultural Rights', number: '+91 99999-22222' },
+  { label: 'Disaster Relief', number: '+91 99999-33333' },
+]
+
 export default function Footer() {
+  const [helplines, setHelplines] = useState(FALLBACK_HELPLINES)
+
+  useEffect(() => {
+    fetch('/api/helplines')
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) setHelplines(data)
+      })
+      .catch(() => {})
+  }, [])
+
   return (
     <footer className="bg-ink">
       <div className="section-divider" />
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-16 lg:py-20">
         <div className="grid lg:grid-cols-12 gap-8 lg:gap-10">
-          <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="lg:col-span-4">
+          <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="lg:col-span-3">
             <div className="flex items-center gap-3 mb-4">
               <img src="/logo.png" alt="RHRS Logo" className="w-12 h-12 object-contain shrink-0" draggable="false" />
               <div>
@@ -19,7 +38,7 @@ export default function Footer() {
             <p className="font-deva text-gold/60 text-sm">॥ धर्मो रक्षति रक्षितः ॥</p>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="lg:col-span-4">
+          <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="lg:col-span-3">
             <p className="text-xs font-bold text-saffron uppercase tracking-wider mb-4">Quick Links</p>
             <div className="space-y-2">
               {[{ label: 'Home', to: '/' }, { label: 'About', to: '/about' }, { label: 'Services', to: '/services' }, { label: 'Gallery', to: '/gallery' }, { label: 'Donate', to: '/#donate' }, { label: 'Admin Panel', to: '/admin' }].map((l) => (
@@ -28,7 +47,19 @@ export default function Footer() {
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="lg:col-span-4">
+          <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="lg:col-span-3">
+            <p className="text-xs font-bold text-saffron uppercase tracking-wider mb-4">◈ Helpline</p>
+            <div className="space-y-2.5">
+              {helplines.map((h) => (
+                <div key={h.id || h.label}>
+                  <p className="text-[9px] text-white/25">{h.label}</p>
+                  <a href={`tel:${h.number.replace(/[^0-9+]/g, '')}`} className="text-sm font-bold text-saffron-light hover:text-saffron transition-colors">{h.number}</a>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }} className="lg:col-span-3">
             <p className="text-xs font-bold text-saffron uppercase tracking-wider mb-4">Contact</p>
             <div className="space-y-2.5 text-xs text-white/35">
               <p><span className="text-white/50">Address:</span> 108, Dharma Marg, New Delhi — 110001</p>
