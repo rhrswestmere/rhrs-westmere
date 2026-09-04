@@ -1,9 +1,14 @@
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 export default function NotFoundPage() {
+  useEffect(() => {
+    document.title = 'Page Not Found — RHRS'
+  }, [])
+
   return (
     <>
       <Navbar />
@@ -11,7 +16,7 @@ export default function NotFoundPage() {
         <section className="pt-16 lg:pt-20 bg-ink" style={{ backgroundImage: 'linear-gradient(140deg, rgba(26,17,0,0.94) 0%, rgba(42,31,10,0.90) 40%, rgba(58,42,16,0.88) 70%, rgba(26,17,0,0.94) 100%)' }}>
           <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-28 lg:py-36">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center max-w-2xl mx-auto">
-              <img src="/logo.png" alt="RHRS Logo" className="w-20 h-20 mx-auto object-contain mb-6" draggable="false" />
+              <img src="/logo.png" alt="Rashtriya Hindu Rakshak Sangh (RHRS) Logo" className="w-20 h-20 mx-auto object-contain mb-6" draggable="false" />
               <p className="font-deva text-saffron text-xs font-bold uppercase tracking-[0.15em] mb-2">॥ धर्मो रक्षति रक्षितः ॥</p>
               <h1 className="font-heading text-7xl lg:text-9xl font-bold text-white leading-none mb-2">404</h1>
               <div className="w-[60px] h-[3px] bg-saffron mx-auto mb-6" />

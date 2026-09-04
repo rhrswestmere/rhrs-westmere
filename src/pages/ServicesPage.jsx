@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
@@ -53,6 +54,13 @@ const activities = [
 ]
 
 export default function ServicesPage() {
+  useEffect(() => {
+    document.title = 'Our Services — RHRS | Legal Aid, Temple Protection, Social Welfare'
+    const meta = document.querySelector('meta[name="description"]')
+    if (meta) meta.setAttribute('content', 'Explore RHRS services — free legal protection, temple protection, human rights advocacy, social welfare, crisis response, women & child safety, and global Hindu network.')
+    let canonical = document.querySelector('link[rel="canonical"]')
+    if (canonical) canonical.setAttribute('href', 'https://rhrs.co.in/services')
+  }, [])
   return (
     <>
       <Navbar />

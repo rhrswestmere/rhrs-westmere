@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
@@ -33,6 +34,13 @@ const values = [
 ]
 
 export default function AboutPage() {
+  useEffect(() => {
+    document.title = 'About RHRS — Rashtriya Hindu Rakshak Sangh'
+    const meta = document.querySelector('meta[name="description"]')
+    if (meta) meta.setAttribute('content', 'Learn about Rashtriya Hindu Rakshak Sangh (RHRS) — our vision, mission, core pillars, values, and nationwide activities for Hindu heritage preservation and social welfare.')
+    let canonical = document.querySelector('link[rel="canonical"]')
+    if (canonical) canonical.setAttribute('href', 'https://rhrs.co.in/about')
+  }, [])
   return (
     <>
       <Navbar />

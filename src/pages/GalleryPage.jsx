@@ -5,6 +5,13 @@ import Footer from '../components/Footer'
 import { getJSON } from '../lib/api'
 
 export default function GalleryPage() {
+  useEffect(() => {
+    document.title = 'Gallery — RHRS | Events, Seva Camps & Community Activities'
+    const meta = document.querySelector('meta[name="description"]')
+    if (meta) meta.setAttribute('content', 'View photos from RHRS events, seva camps, temple restorations, and community welfare activities across India.')
+    let canonical = document.querySelector('link[rel="canonical"]')
+    if (canonical) canonical.setAttribute('href', 'https://rhrs.co.in/gallery')
+  }, [])
   const [tab, setTab] = useState('events')
   const [photos, setPhotos] = useState([])
   const [loading, setLoading] = useState(true)

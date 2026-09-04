@@ -36,7 +36,9 @@ export default function Helpline() {
               className="group border border-saffron/15 hover:border-saffron/40 rounded-sm p-6 lg:p-8 text-center cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" style={{ background: 'rgba(255,255,255,0.04)' }}>
               <span className="text-saffron-light/60 text-3xl block mb-4 transition-transform duration-300 group-hover:scale-110">{item.icon}</span>
               <h3 className="text-saffron-light text-xs font-bold uppercase tracking-wider mb-2">{item.label}</h3>
-              <p className="font-heading text-lg lg:text-xl font-bold text-white mb-2 tracking-wide">{item.number}</p>
+              <p className="font-heading text-lg lg:text-xl font-bold text-white mb-2 tracking-wide">
+                <a href={`tel:${item.number.replace(/[^0-9+]/g, '')}`} className="hover:text-saffron-light transition-colors">{item.number}</a>
+              </p>
               <p className="text-sm text-white/25">{item.description}</p>
             </motion.div>
           ))}

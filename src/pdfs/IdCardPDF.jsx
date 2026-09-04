@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Page, View, Document, StyleSheet, Svg, Rect, Image, Text } from '@react-pdf/renderer'
+import { Page, View, Document, Svg, Rect, Image, Text } from '@react-pdf/renderer'
 import qrcode from 'qrcode-generator'
 
 /*

@@ -7,7 +7,7 @@ export default function Hero() {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}>
             <div className="flex items-center gap-3 mb-5">
-              <img src="/logo.png" alt="RHRS Logo" className="w-12 h-12 lg:w-14 lg:h-14 object-contain drop-shadow-lg shrink-0" draggable="false" />
+              <img src="/logo.png" alt="Rashtriya Hindu Rakshak Sangh (RHRS) Logo" className="w-12 h-12 lg:w-14 lg:h-14 object-contain drop-shadow-lg shrink-0" draggable="false" />
               <div>
                 <p className="font-deva text-saffron-light text-sm lg:text-base font-semibold leading-tight">॥ धर्मो रक्षति रक्षितः ॥</p>
                 <p className="text-[11px] text-white/30">Est. 2026 | Nationwide</p>

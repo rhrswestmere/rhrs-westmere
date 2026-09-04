@@ -62,11 +62,23 @@ export default function Footer() {
             <p className="text-xs font-bold text-saffron uppercase tracking-wider mb-4">Contact</p>
             <div className="space-y-2.5 text-xs text-white/35">
               <p><span className="text-white/50">Address:</span> 108, Dharma Marg, New Delhi — 110001</p>
-              <p><span className="text-white/50">Email:</span> contact@rhns.org</p>
-              <p><span className="text-white/50">Phone:</span> +91 1800-123-4567</p>
+              <p>
+                <span className="text-white/50">Email:</span>{' '}
+                <a href="mailto:contact@rhns.org" className="text-saffron-light hover:text-saffron transition-colors underline underline-offset-2">contact@rhns.org</a>
+              </p>
+              <p>
+                <span className="text-white/50">Phone:</span>{' '}
+                <a href="tel:+9118001234567" className="text-saffron-light hover:text-saffron transition-colors underline underline-offset-2">+91 1800-123-4567</a>
+              </p>
               <div className="flex gap-2 mt-4">
-                {['X', 'FB', 'IG', 'YT', 'WA'].map((p) => (
-                  <a key={p} href="#" className="w-8 h-8 border border-white/10 flex items-center justify-center text-[9px] text-white/25 hover:text-saffron-light hover:border-saffron/30 transition-all duration-200 uppercase tracking-wider">{p}</a>
+                {[
+                  { label: 'X', href: '#' },
+                  { label: 'FB', href: '#' },
+                  { label: 'IG', href: '#' },
+                  { label: 'YT', href: '#' },
+                  { label: 'WA', href: '#' },
+                ].map((p) => (
+                  <a key={p.label} href={p.href} target="_blank" rel="noopener noreferrer" className="w-8 h-8 border border-white/10 flex items-center justify-center text-[9px] text-white/25 hover:text-saffron-light hover:border-saffron/30 transition-all duration-200 uppercase tracking-wider">{p.label}</a>
                 ))}
               </div>
             </div>
