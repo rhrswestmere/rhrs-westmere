@@ -1,25 +1,7 @@
-import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 
-const FALLBACK_HELPLINES = [
-  { label: 'National Helpline', number: '1800-123-HELP' },
-  { label: 'Women Protection', number: '+91 99999-11111' },
-  { label: 'Cultural Rights', number: '+91 99999-22222' },
-  { label: 'Disaster Relief', number: '+91 99999-33333' },
-]
-
 export default function Footer() {
-  const [helplines, setHelplines] = useState(FALLBACK_HELPLINES)
-
-  useEffect(() => {
-    fetch('/api/helplines')
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((data) => {
-        if (Array.isArray(data) && data.length > 0) setHelplines(data)
-      })
-      .catch(() => {})
-  }, [])
   return (
     <footer className="bg-ink">
       <div className="section-divider" />
@@ -37,7 +19,7 @@ export default function Footer() {
             <p className="font-deva text-gold/60 text-sm">॥ धर्मो रक्षति रक्षितः ॥</p>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="lg:col-span-2">
+          <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="lg:col-span-4">
             <p className="text-xs font-bold text-saffron uppercase tracking-wider mb-4">Quick Links</p>
             <div className="space-y-2">
               {[{ label: 'Home', to: '/' }, { label: 'About', to: '/about' }, { label: 'Services', to: '/services' }, { label: 'Gallery', to: '/gallery' }, { label: 'Donate', to: '/#donate' }, { label: 'Admin Panel', to: '/admin' }].map((l) => (
@@ -46,19 +28,7 @@ export default function Footer() {
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="lg:col-span-3">
-            <p className="text-xs font-bold text-saffron uppercase tracking-wider mb-4">◈ Helpline</p>
-            <div className="space-y-2.5">
-              {helplines.map((h) => (
-                <div key={h.id || h.label}>
-                  <p className="text-[9px] text-white/25">{h.label}</p>
-                  <p className="text-sm font-bold text-saffron-light">{h.number}</p>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }} className="lg:col-span-3">
+          <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="lg:col-span-4">
             <p className="text-xs font-bold text-saffron uppercase tracking-wider mb-4">Contact</p>
             <div className="space-y-2.5 text-xs text-white/35">
               <p><span className="text-white/50">Address:</span> 108, Dharma Marg, New Delhi — 110001</p>
