@@ -1,5 +1,5 @@
 {
-  "rewrites": [{ "source": "/((?!api/).*)", "destination": "/index.html" }],
+  "rewrites": [{ "source": "/((?!api/|sitemap\\.xml|robots\\.txt|favicon\\.svg|logo\\.png|googlec68e92cfd80a0cda\\.html).*)", "destination": "/index.html" }],
   "headers": [
     {
       "source": "/(index.html|admin)?",
