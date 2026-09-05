@@ -75,38 +75,38 @@ export default function IdCardPDF({ data }) {
         <View style={root}>
           <Image src="/id-front.png" style={bg} />
 
-          {/* Member Photo — x:184 y:329 w:162 h:145 */}
+          {/* Member Photo — x:184 y:314 w:162 h:145 */}
           {photo && (
             <Image src={photo} style={{
               position: 'absolute',
-              left: fp(184), top: fy(329),
+              left: fp(184), top: fy(314),
               width: fw(162), height: fh(145),
               objectFit: 'cover',
             }} />
           )}
 
-          {/* Name — x:224 y:482 w:111 h:17 */}
-          <View style={{ position: 'absolute', left: fp(224), top: fy(482), width: fw(111), height: fh(17), justifyContent: 'flex-end', paddingBottom: fh(1) }}>
+          {/* Name — x:224 y:472 w:111 h:17 */}
+          <View style={{ position: 'absolute', left: fp(224), top: fy(472), width: fw(111), height: fh(17), justifyContent: 'flex-end', paddingBottom: fh(1) }}>
             <Text style={{ fontWeight: '600', color: '#2B2113', fontSize: 8.5, lineHeight: 1 }}>{fullName}</Text>
           </View>
 
-          {/* Designation — x:224 y:510 w:111 h:17 */}
-          <View style={{ position: 'absolute', left: fp(224), top: fy(510), width: fw(111), height: fh(17), justifyContent: 'flex-end', paddingBottom: fh(1) }}>
+          {/* Designation — x:224 y:500 w:111 h:17 */}
+          <View style={{ position: 'absolute', left: fp(224), top: fy(500), width: fw(111), height: fh(17), justifyContent: 'flex-end', paddingBottom: fh(1) }}>
             <Text style={{ fontWeight: '600', color: '#2B2113', fontSize: desig.length > 14 ? 7 : 8.5, lineHeight: 1 }}>{desig}</Text>
           </View>
 
-          {/* Member ID — x:224 y:539 w:111 h:17 */}
-          <View style={{ position: 'absolute', left: fp(224), top: fy(539), width: fw(111), height: fh(17), justifyContent: 'flex-end', paddingBottom: fh(1) }}>
+          {/* Member ID — x:224 y:529 w:111 h:17 */}
+          <View style={{ position: 'absolute', left: fp(224), top: fy(529), width: fw(111), height: fh(17), justifyContent: 'flex-end', paddingBottom: fh(1) }}>
             <Text style={{ fontWeight: '600', color: '#2B2113', fontFamily: 'Courier', fontSize: 8.5, letterSpacing: 0.3, lineHeight: 1 }}>{memberId}</Text>
           </View>
 
-          {/* Blood Group — x:224 y:567 w:111 h:17 */}
-          <View style={{ position: 'absolute', left: fp(224), top: fy(567), width: fw(111), height: fh(17), justifyContent: 'flex-end', paddingBottom: fh(1) }}>
+          {/* Blood Group — x:224 y:557 w:111 h:17 */}
+          <View style={{ position: 'absolute', left: fp(224), top: fy(557), width: fw(111), height: fh(17), justifyContent: 'flex-end', paddingBottom: fh(1) }}>
             <Text style={{ fontWeight: '600', color: '#2B2113', fontSize: 8.5, lineHeight: 1 }}>{blood}</Text>
           </View>
 
-          {/* Mobile — x:224 y:596 w:111 h:17 */}
-          <View style={{ position: 'absolute', left: fp(224), top: fy(596), width: fw(111), height: fh(17), justifyContent: 'flex-end', paddingBottom: fh(1) }}>
+          {/* Mobile — x:224 y:586 w:111 h:17 */}
+          <View style={{ position: 'absolute', left: fp(224), top: fy(586), width: fw(111), height: fh(17), justifyContent: 'flex-end', paddingBottom: fh(1) }}>
             <Text style={{ fontWeight: '600', color: '#2B2113', fontFamily: 'Courier', fontSize: 8.5, letterSpacing: 0.3, lineHeight: 1 }}>{mobile}</Text>
           </View>
 
