@@ -36,6 +36,7 @@ create table if not exists members (
   designation_title text,
   designation_state text,
   designation_number text,
+  is_active boolean not null default true,
   created_at timestamptz not null default now(),
   check (
     designation_level in ('national', 'zonal', 'state', 'district', 'constituency', 'mandal', 'mahila_morcha', 'yuva_morcha')

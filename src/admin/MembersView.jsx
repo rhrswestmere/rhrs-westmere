@@ -1,31 +1,48 @@
 import { Fragment, useEffect, useState } from 'react'
-import { searchMembers, assignDesignation, removeDesignation } from './api'
+import { searchMembers, assignDesignation, removeDesignation, toggleMemberStatus, deleteMember } from './api'
 import { DESIGNATION_LEVELS, DESIGNATION_LABELS } from './designations'
 import { pdfUrl } from '../pdfs/utils'
 
-function MemberRow({ member, onSelect, selected }) {
+function MemberRow({ member, onSelect, selected, onToggleStatus, onDelete, saving }) {
   const hasDesig = !!member.designation_level
+  const isActive = member.is_active !== false
   return (
-    <tr className={`border-b border-border/60 transition-colors ${selected ? 'bg-saffron-bg' : 'hover:bg-saffron-bg/40'}`}>
+    <tr className={`border-b border-border/60 transition-colors ${selected ? 'bg-saffron-bg' : 'hover:bg-saffron-bg/40'} ${!isActive ? 'opacity-50' : ''}`}>
       <td className="px-4 py-3 text-xs font-mono text-ink">{member.member_id}</td>
       <td className="px-4 py-3 text-xs font-bold text-ink">{member.full_name}</td>
-      <td className="px-4 py-3 text-xs text-ink-muted">{member.emergency_contact || '—'}</td>
+      <td className="px-4 py-3 text-xs text-ink-muted">{member.emergency_contact || '---'}</td>
       <td className="px-4 py-3">
         {hasDesig ? (
           <span className="text-[10px] font-bold text-saffron bg-saffron-bg border border-saffron/30 rounded-sm px-2 py-1">
             {member.designation_title} · {member.designation_number}
           </span>
         ) : (
-          <span className="text-[10px] text-ink-muted">—</span>
+          <span className="text-[10px] text-ink-muted">---</span>
         )}
       </td>
       <td className="px-4 py-3">
-        <button
-          onClick={() => onSelect(member)}
-          className="text-[10px] font-bold uppercase tracking-wider text-saffron border border-saffron/40 px-3 py-1.5 rounded-sm hover:bg-saffron hover:text-white transition-all cursor-pointer"
-        >
-          {hasDesig ? 'Edit' : 'Assign Designation'}
-        </button>
+        <div className="flex flex-wrap gap-1.5">
+          <button
+            onClick={() => onSelect(member)}
+            className="text-[10px] font-bold uppercase tracking-wider text-saffron border border-saffron/40 px-3 py-1.5 rounded-sm hover:bg-saffron hover:text-white transition-all cursor-pointer"
+          >
+            {hasDesig ? 'Edit' : 'Assign Designation'}
+          </button>
+          <button
+            onClick={() => onToggleStatus(member)}
+            disabled={saving}
+            className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-sm transition-all cursor-pointer border ${isActive ? 'border-orange-300 text-orange-600 hover:bg-orange-600 hover:text-white' : 'border-green-300 text-green-600 hover:bg-green-600 hover:text-white'}`}
+          >
+            {isActive ? 'Deactivate' : 'Activate'}
+          </button>
+          <button
+            onClick={() => onDelete(member)}
+            disabled={saving}
+            className="text-[10px] font-bold uppercase tracking-wider text-red-600 border border-red-300 px-3 py-1.5 rounded-sm hover:bg-red-600 hover:text-white transition-all cursor-pointer"
+          >
+            Delete
+          </button>
+        </div>
       </td>
     </tr>
   )
@@ -43,6 +60,7 @@ export default function MembersView({ token }) {
   const [saveError, setSaveError] = useState('')
   const [pdf, setPdf] = useState(null)
   const [pdfBusy, setPdfBusy] = useState(false)
+  const [statusBusy, setStatusBusy] = useState(false)
 
   const load = async (q = query) => {
     setLoading(true)
@@ -98,7 +116,7 @@ export default function MembersView({ token }) {
       setSelected(updated)
     } catch (err) {
       if (String(err.message).toLowerCase().includes('quota')) {
-        setSaveError('⚠ Quota full hai — is category ki 10 seats bhar chuki hain, member regular hi rahega')
+        setSaveError(`⚠ Quota full hai — is category ki ${quota?.perLevel || 100} seats bhar chuki hain, member regular hi rahega`)
       } else {
         setSaveError(err.message)
       }
@@ -138,6 +156,38 @@ export default function MembersView({ token }) {
       console.error('PDF generation failed:', err)
     } finally {
       setPdfBusy(false)
+    }
+  }
+
+  const handleToggleStatus = async (member) => {
+    const isActive = member.is_active !== false
+    const action = isActive ? 'deactivate' : 'activate'
+    if (!window.confirm(`Member ${action} karein? ${isActive ? 'Ye active list se hat jayega.' : 'Ye wapas active list me aa jayega.'}`)) return
+    setStatusBusy(true)
+    try {
+      await toggleMemberStatus(token, member.id, !isActive)
+      await load()
+      if (selected?.id === member.id) {
+        setSelected({ ...member, is_active: !isActive })
+      }
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setStatusBusy(false)
+    }
+  }
+
+  const handleDelete = async (member) => {
+    if (!window.confirm(`Member "${member.full_name}" (${member.member_id}) permanently delete karein? Ye action undo nahi hoga.`)) return
+    setStatusBusy(true)
+    try {
+      await deleteMember(token, member.id)
+      if (selected?.id === member.id) setSelected(null)
+      await load()
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setStatusBusy(false)
     }
   }
 
@@ -208,7 +258,7 @@ export default function MembersView({ token }) {
               <tbody>
                 {members.map((m) => (
                   <Fragment key={m.id}>
-                    <MemberRow member={m} selected={selected?.id === m.id} onSelect={handleSelect} />
+                    <MemberRow member={m} selected={selected?.id === m.id} onSelect={handleSelect} onToggleStatus={handleToggleStatus} onDelete={handleDelete} saving={statusBusy} />
                     {selected?.id === m.id && (
                       <tr className="bg-saffron-bg/40 border-b border-saffron/20">
                         <td colSpan={5} className="px-5 py-4">

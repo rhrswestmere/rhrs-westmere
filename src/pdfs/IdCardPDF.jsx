@@ -16,10 +16,10 @@ const pw = (w) => P((w / 768) * 148)
 const ph = (h) => P((h / 1024) * 210)
 
 const fmtDate = (iso) => {
-  if (!iso) return '—'
+  if (!iso) return '---'
   try {
     return new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
-  } catch { return '—' }
+  } catch { return '---' }
 }
 
 function QRBox({ value, size }) {
@@ -45,26 +45,6 @@ function QRBox({ value, size }) {
   )
 }
 
-/* ── Shared value column layout ──
-   All 5 dynamic values share the same X, width, and styling.
-   Positioned AFTER the ":" with consistent padding. */
-
-// X position: colon is ~x:275, add ~16px padding → x:340
-const VAL_X = 340
-// Width: from x:340 to ~x:500 (before QR area at x:563)
-const VAL_W = 155
-// Shared row height
-const ROW_H = 26
-
-// Y top-edges: shifted UP ~15px from line center so text sits above the line
-const ROW_Y = {
-  name: 655,
-  designation: 691,
-  memberId: 727,
-  bloodGroup: 763,
-  mobile: 799,
-}
-
 const nameFontSize = (name) => {
   if (!name) return 10
   const l = name.length
@@ -82,36 +62,26 @@ const valFontSize = (v) => {
   return 7
 }
 
-// Shared value container style — text sits at TOP, line is below as underline
-const valueContainer = {
-  position: 'absolute',
-  left: px(VAL_X),
-  width: pw(VAL_W),
-  height: ph(ROW_H),
-  justifyContent: 'flex-start',
-  paddingBottom: ph(8),
-}
-
-// Shared value text style
-const valueText = {
-  fontWeight: 'bold',
-  color: '#2B2113',
-  lineHeight: 1,
-}
-
 export default function IdCardPDF({ data }) {
-  const memberId = data?.member_id || '—'
-  const fullName = data?.full_name || '—'
-  const mobile = data?.emergency_contact || '—'
+  const memberId = data?.member_id || '---'
+  const fullName = data?.full_name || '---'
+  const mobile = data?.emergency_contact || '---'
   const photo = data?.photo || null
-  const verifyUrl = `https://rhrsdemo2.vercel.app/verify/${memberId}`
   const desig = data?.designation_title || 'ACTIVE MEMBER'
-  const blood = data?.blood_group || '—'
+  const blood = data?.blood_group || '---'
   const validDate = fmtDate(data?.created_at)
+
+  const qrData = JSON.stringify({
+    name: fullName,
+    designation: desig,
+    memberId,
+    bloodGroup: blood,
+    mobile,
+  })
 
   return (
     <Document>
-      {/* ══════════ FRONT ══════════ */}
+      {/* FRONT */}
       <Page wrap={false} size={[P(148), P(210)]} style={pg}>
         <View style={root}>
           <Image src="/id-front.png" style={bg} />
@@ -120,71 +90,62 @@ export default function IdCardPDF({ data }) {
           {photo && (
             <Image src={photo} style={{
               position: 'absolute',
-              left: px(277), top: py(443),
-              width: pw(221), height: ph(198),
+              left: px(265), top: py(310),
+              width: pw(240), height: ph(175),
               objectFit: 'cover',
             }} />
           )}
 
-          {/* ── Dynamic values: shared column layout ── */}
-
           {/* Name */}
-          <View style={[valueContainer, { top: py(ROW_Y.name) }]}>
-            <Text style={[valueText, { fontSize: nameFontSize(fullName) }]}>{fullName}</Text>
+          <View style={{ position: 'absolute', left: px(135), top: py(510), width: pw(260), height: ph(30), justifyContent: 'flex-end', paddingBottom: ph(8) }}>
+            <Text style={{ fontWeight: 'bold', color: '#2B2113', fontSize: nameFontSize(fullName), lineHeight: 1 }}>{fullName}</Text>
           </View>
 
           {/* Designation */}
-          <View style={[valueContainer, { top: py(ROW_Y.designation) }]}>
-            <Text style={[valueText, { fontSize: valFontSize(desig) }]}>{desig}</Text>
+          <View style={{ position: 'absolute', left: px(135), top: py(548), width: pw(260), height: ph(30), justifyContent: 'flex-end', paddingBottom: ph(8) }}>
+            <Text style={{ fontWeight: 'bold', color: '#2B2113', fontSize: valFontSize(desig), lineHeight: 1 }}>{desig}</Text>
           </View>
 
           {/* Member ID */}
-          <View style={[valueContainer, { top: py(ROW_Y.memberId) }]}>
-            <Text style={[valueText, { fontFamily: 'Courier', fontSize: 8.5, letterSpacing: 0.8 }]}>{memberId}</Text>
+          <View style={{ position: 'absolute', left: px(135), top: py(586), width: pw(260), height: ph(30), justifyContent: 'flex-end', paddingBottom: ph(8) }}>
+            <Text style={{ fontWeight: 'bold', color: '#2B2113', fontFamily: 'Courier', fontSize: 8.5, letterSpacing: 0.8, lineHeight: 1 }}>{memberId}</Text>
           </View>
 
           {/* Blood Group */}
-          <View style={[valueContainer, { top: py(ROW_Y.bloodGroup) }]}>
-            <Text style={[valueText, { fontSize: valFontSize(blood) }]}>{blood}</Text>
+          <View style={{ position: 'absolute', left: px(135), top: py(624), width: pw(260), height: ph(30), justifyContent: 'flex-end', paddingBottom: ph(8) }}>
+            <Text style={{ fontWeight: 'bold', color: '#2B2113', fontSize: valFontSize(blood), lineHeight: 1 }}>{blood}</Text>
           </View>
 
           {/* Mobile */}
-          <View style={[valueContainer, { top: py(ROW_Y.mobile) }]}>
-            <Text style={[valueText, { fontFamily: 'Courier', fontSize: 8.5, letterSpacing: 0.8 }]}>{mobile}</Text>
+          <View style={{ position: 'absolute', left: px(135), top: py(662), width: pw(260), height: ph(30), justifyContent: 'flex-end', paddingBottom: ph(8) }}>
+            <Text style={{ fontWeight: 'bold', color: '#2B2113', fontFamily: 'Courier', fontSize: 8.5, letterSpacing: 0.8, lineHeight: 1 }}>{mobile}</Text>
           </View>
 
           {/* QR Code */}
-          <View style={{ position: 'absolute', left: px(563), top: py(670), width: pw(154), height: ph(148), alignItems: 'center', justifyContent: 'center' }}>
-            <QRBox value={verifyUrl} size={pw(130)} />
+          <View style={{ position: 'absolute', left: px(510), top: py(520), width: pw(120), height: ph(120), alignItems: 'center', justifyContent: 'center' }}>
+            <QRBox value={qrData} size={pw(110)} />
           </View>
 
           {/* Valid Upto date */}
-          <View style={{ position: 'absolute', left: px(115), top: py(895), width: pw(150), height: ph(42), alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ position: 'absolute', left: px(80), top: py(800), width: pw(130), height: ph(35), alignItems: 'center', justifyContent: 'center' }}>
             <Text style={{ fontWeight: 'bold', color: '#FFFFFF', fontSize: 8, textAlign: 'center' }}>{validDate}</Text>
           </View>
         </View>
       </Page>
 
-      {/* ══════════ BACK ══════════ */}
+      {/* BACK */}
       <Page wrap={false} size={[P(148), P(210)]} style={pg}>
         <View style={root}>
           <Image src="/id-back.png" style={bg} />
 
-          {/* ── Emergency Contact Section ── */}
-
-          {/* Member name — sits ABOVE the underline, next to phone icon */}
-          <View style={{ position: 'absolute', left: px(105), top: py(792), width: pw(150), height: ph(22), justifyContent: 'flex-start' }}>
-            <Text style={{ fontWeight: 'bold', color: '#2B2113', fontSize: nameFontSize(fullName), lineHeight: 1 }}>{fullName}</Text>
+          {/* Emergency Contact Number */}
+          <View style={{ position: 'absolute', left: px(75), top: py(750), width: pw(130), height: ph(22), justifyContent: 'flex-start', paddingBottom: ph(4) }}>
+            <Text style={{ fontWeight: 'bold', color: '#2B2113', fontSize: 9, fontFamily: 'Courier', letterSpacing: 0.5, lineHeight: 1 }}>{mobile}</Text>
           </View>
 
-          {/* Emergency contact number — sits BELOW the underline */}
-          <View style={{ position: 'absolute', left: px(105), top: py(822), width: pw(150), height: ph(20), justifyContent: 'flex-start' }}>
-            <Text style={{ fontWeight: 'bold', color: '#2B2113', fontSize: 8.5, letterSpacing: 0.5 }}>{mobile}</Text>
-          </View>
-
-          {/* ── QR Code in the empty gold-bordered square ── */}
-          <View style={{ position: 'absolute', left: px(275), top: py(743), width: pw(76), height: ph(78), alignItems: 'center', justifyContent: 'center' }}>
-            <QRBox value={verifyUrl} size={pw(64)} />
+          {/* QR Code */}
+          <View style={{ position: 'absolute', left: px(240), top: py(720), width: pw(100), height: ph(100), alignItems: 'center', justifyContent: 'center' }}>
+            <QRBox value={qrData} size={pw(90)} />
           </View>
         </View>
       </Page>

@@ -20,7 +20,7 @@ export const DESIGNATION_LABELS = {
   yuva_morcha: 'Yuva Morcha',
 }
 
-export const DESIGNATION_QUOTA = 10
+export const DESIGNATION_QUOTA = 100
 
 export const padSerial = (n) => String(n).padStart(10, '0')
 
