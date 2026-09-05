@@ -94,11 +94,12 @@ export default function IdCardPDF({ data }) {
         <View style={root}>
           <Image src="/id-front.png" style={bg} />
 
-          {/* Member Photo — exact position, no dimensional constraint */}
+          {/* Member Photo — exact position, natural dimensions */}
           {photo && (
             <Image src={photo} style={{
               position: 'absolute',
               left: fp(184), top: fy(314),
+              width: fw(162), height: fh(145),
               objectFit: 'cover',
             }} />
           )}
