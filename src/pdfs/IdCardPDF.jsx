@@ -49,6 +49,15 @@ const fmtDate = (iso) => {
   } catch { return '---' }
 }
 
+const fmtValidUpto = (iso) => {
+  if (!iso) return '---'
+  try {
+    const d = new Date(iso)
+    d.setFullYear(d.getFullYear() + 1)
+    return d.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  } catch { return '---' }
+}
+
 const VAL_FONT = 9.5
 const VAL_STYLE = { fontWeight: '600', color: '#2B2113', lineHeight: 1 }
 
@@ -59,7 +68,7 @@ export default function IdCardPDF({ data }) {
   const photo = data?.photo || null
   const desig = data?.designation_title || 'ACTIVE MEMBER'
   const blood = data?.blood_group || '---'
-  const validDate = fmtDate(data?.created_at)
+  const validDate = fmtValidUpto(data?.created_at)
 
   const qrData = JSON.stringify({
     name: fullName,
