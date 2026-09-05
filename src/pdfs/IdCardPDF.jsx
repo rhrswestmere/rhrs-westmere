@@ -94,12 +94,11 @@ export default function IdCardPDF({ data }) {
         <View style={root}>
           <Image src="/id-front.png" style={bg} />
 
-          {/* Member Photo — fills entire frame area */}
+          {/* Member Photo — exact position, no dimensional constraint */}
           {photo && (
             <Image src={photo} style={{
               position: 'absolute',
               left: fp(184), top: fy(314),
-              width: fw(162), height: fh(145),
               objectFit: 'cover',
             }} />
           )}
@@ -129,8 +128,8 @@ export default function IdCardPDF({ data }) {
             <Text style={{ fontWeight: '600', color: '#2B2113', fontFamily: 'Courier', fontSize: 8.5, letterSpacing: 0.3, lineHeight: 1 }}>{mobile}</Text>
           </View>
 
-          {/* VALID UPTO — white, larger, shifted 3px down + 5px left */}
-          <View style={{ position: 'absolute', left: fp(78), top: fy(642), width: fw(100), height: fh(18), alignItems: 'center', justifyContent: 'flex-end', paddingBottom: fh(1) }}>
+          {/* VALID UPTO — white, larger, shifted 20px down + 5px left */}
+          <View style={{ position: 'absolute', left: fp(78), top: fy(662), width: fw(100), height: fh(18), alignItems: 'center', justifyContent: 'flex-end', paddingBottom: fh(1) }}>
             <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 9.5, textAlign: 'center' }}>{validDate}</Text>
           </View>
 
