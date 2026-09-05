@@ -110,8 +110,8 @@ export default function IdCardPDF({ data }) {
             <Text style={{ fontWeight: '600', color: '#2B2113', fontFamily: 'Courier', fontSize: 8.5, letterSpacing: 0.3, lineHeight: 1 }}>{mobile}</Text>
           </View>
 
-          {/* VALID UPTO — x:83 y:649 w:91 h:18 */}
-          <View style={{ position: 'absolute', left: fp(83), top: fy(649), width: fw(91), height: fh(18), alignItems: 'center', justifyContent: 'flex-end', paddingBottom: fh(1) }}>
+          {/* VALID UPTO — x:83 y:639 w:91 h:18 */}
+          <View style={{ position: 'absolute', left: fp(83), top: fy(639), width: fw(91), height: fh(18), alignItems: 'center', justifyContent: 'flex-end', paddingBottom: fh(1) }}>
             <Text style={{ fontWeight: '600', color: '#2B2113', fontSize: 8, textAlign: 'center' }}>{validDate}</Text>
           </View>
 

@@ -21,8 +21,11 @@ function readBody(req) {
 export default async function handler(req, res) {
   if (!(await requireAdmin(req, res))) return
 
-  const { id, action } = req.query
+  const { id } = req.query
   if (!id) return fail(res, 400, 'id is required')
+
+  const url = new URL(req.url, 'http://localhost')
+  const action = url.searchParams.get('action')
 
   if (action === 'status') {
     if (req.method === 'PATCH') {
