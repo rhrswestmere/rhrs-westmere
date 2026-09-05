@@ -51,6 +51,25 @@ const fmtValidUpto = (iso) => {
   } catch { return '---' }
 }
 
+const nameFontSize = (name) => {
+  if (!name) return 8.5
+  const l = name.length
+  if (l <= 10) return 8.5
+  if (l <= 14) return 7.5
+  if (l <= 18) return 6.5
+  if (l <= 22) return 5.5
+  return 5
+}
+
+const desigFontSize = (v) => {
+  if (!v) return 8.5
+  const l = v.length
+  if (l <= 12) return 8.5
+  if (l <= 16) return 7
+  if (l <= 20) return 6
+  return 5.5
+}
+
 export default function IdCardPDF({ data }) {
   const memberId = data?.member_id || '---'
   const fullName = data?.full_name || '---'
@@ -75,7 +94,7 @@ export default function IdCardPDF({ data }) {
         <View style={root}>
           <Image src="/id-front.png" style={bg} />
 
-          {/* Member Photo — x:184 y:314 w:162 h:145 */}
+          {/* Member Photo — fills entire frame area */}
           {photo && (
             <Image src={photo} style={{
               position: 'absolute',
@@ -85,14 +104,14 @@ export default function IdCardPDF({ data }) {
             }} />
           )}
 
-          {/* Name — x:224 y:472 w:111 h:17 */}
+          {/* Name — auto-shrink for long names */}
           <View style={{ position: 'absolute', left: fp(224), top: fy(472), width: fw(111), height: fh(17), justifyContent: 'flex-end', paddingBottom: fh(1) }}>
-            <Text style={{ fontWeight: '600', color: '#2B2113', fontSize: 8.5, lineHeight: 1 }}>{fullName}</Text>
+            <Text style={{ fontWeight: '600', color: '#2B2113', fontSize: nameFontSize(fullName), lineHeight: 1 }}>{fullName}</Text>
           </View>
 
-          {/* Designation — x:224 y:500 w:111 h:17 */}
+          {/* Designation — auto-shrink for long values */}
           <View style={{ position: 'absolute', left: fp(224), top: fy(500), width: fw(111), height: fh(17), justifyContent: 'flex-end', paddingBottom: fh(1) }}>
-            <Text style={{ fontWeight: '600', color: '#2B2113', fontSize: desig.length > 14 ? 7 : 8.5, lineHeight: 1 }}>{desig}</Text>
+            <Text style={{ fontWeight: '600', color: '#2B2113', fontSize: desigFontSize(desig), lineHeight: 1 }}>{desig}</Text>
           </View>
 
           {/* Member ID — x:224 y:529 w:111 h:17 */}
@@ -110,9 +129,9 @@ export default function IdCardPDF({ data }) {
             <Text style={{ fontWeight: '600', color: '#2B2113', fontFamily: 'Courier', fontSize: 8.5, letterSpacing: 0.3, lineHeight: 1 }}>{mobile}</Text>
           </View>
 
-          {/* VALID UPTO — x:83 y:639 w:91 h:18 */}
-          <View style={{ position: 'absolute', left: fp(83), top: fy(639), width: fw(91), height: fh(18), alignItems: 'center', justifyContent: 'flex-end', paddingBottom: fh(1) }}>
-            <Text style={{ fontWeight: '600', color: '#2B2113', fontSize: 8, textAlign: 'center' }}>{validDate}</Text>
+          {/* VALID UPTO — white, larger, shifted 3px down + 5px left */}
+          <View style={{ position: 'absolute', left: fp(78), top: fy(642), width: fw(100), height: fh(18), alignItems: 'center', justifyContent: 'flex-end', paddingBottom: fh(1) }}>
+            <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 9.5, textAlign: 'center' }}>{validDate}</Text>
           </View>
 
           {/* FRONT QR = SAME as BACK QR — x:386 y:488 w:101 h:101 */}
