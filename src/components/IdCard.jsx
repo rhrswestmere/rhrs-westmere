@@ -3,6 +3,29 @@ import { motion } from 'framer-motion'
 import { postJSON } from '../lib/api'
 import { pdfUrl, fetchImageBase64 } from '../pdfs/utils'
 
+const DESIGNATION_LEVELS = [
+  { value: '', label: 'Active Member (Default)' },
+  { value: 'national', label: 'National Level' },
+  { value: 'zonal', label: 'Zonal Level' },
+  { value: 'state', label: 'State Level' },
+  { value: 'district', label: 'District Level' },
+  { value: 'constituency', label: 'Constituency Level' },
+  { value: 'mandal', label: 'Mandal Level' },
+  { value: 'mahila_morcha', label: 'Mahila Morcha' },
+  { value: 'yuva_morcha', label: 'Yuva Morcha' },
+]
+
+const DESIGNATION_TITLES = {
+  national: ['National President', 'National Secretary', 'National Treasurer', 'National Coordinator'],
+  zonal: ['Zonal President', 'Zonal Secretary', 'Zonal Coordinator'],
+  state: ['State President', 'State Secretary', 'State Coordinator', 'State Treasurer'],
+  district: ['District President', 'District Secretary', 'District Coordinator'],
+  constituency: ['Constituency President', 'Constituency Secretary', 'Constituency Coordinator'],
+  mandal: ['Mandal President', 'Mandal Secretary', 'Mandal Coordinator'],
+  mahila_morcha: ['Mahila President', 'Mahila Secretary', 'Mahila Coordinator'],
+  yuva_morcha: ['Yuva President', 'Yuva Secretary', 'Yuva Coordinator'],
+}
+
 function useSubmit(endpoint) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -132,7 +155,7 @@ function usePdf() {
 function IdCardForm() {
   const { loading, error, result, submit, reset } = useSubmit('/api/members')
   const { pdf, pdfBusy, pdfError, generate, clear } = usePdf()
-  const [form, setForm] = useState({ full_name: '', address: '', blood_group: 'A+', emergency_contact: '', photo: '' })
+  const [form, setForm] = useState({ full_name: '', address: '', blood_group: 'A+', emergency_contact: '', photo: '', designation_level: '', designation_title: '' })
 
   const handlePhoto = (e) => {
     const file = e.target.files && e.target.files[0]
@@ -152,14 +175,23 @@ function IdCardForm() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const payload = { full_name: form.full_name, address: form.address, blood_group: form.blood_group, emergency_contact: form.emergency_contact }
+    if (form.designation_level && form.designation_title) {
+      payload.designation_level = form.designation_level
+      payload.designation_title = form.designation_title
+    }
     const data = await submit(payload)
-    if (data) generate(() => import('../pdfs/IdCardPDF'), { ...data, photo: form.photo || null })
+    if (data) {
+      if (data.designation_warning) {
+        setError(data.designation_warning)
+      }
+      generate(() => import('../pdfs/IdCardPDF'), { ...data, photo: form.photo || null })
+    }
   }
 
   const handleReset = () => {
     clear()
     reset()
-    setForm({ full_name: '', address: '', blood_group: 'A+', emergency_contact: '', photo: '' })
+    setForm({ full_name: '', address: '', blood_group: 'A+', emergency_contact: '', photo: '', designation_level: '', designation_title: '' })
   }
 
   if (result) {
@@ -205,6 +237,27 @@ function IdCardForm() {
               <Label>Emergency Contact</Label>
               <input type="tel" required placeholder="Phone number" className="input-field" value={form.emergency_contact} onChange={(e) => setForm({ ...form, emergency_contact: e.target.value })} />
             </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Designation Level</Label>
+              <select className="input-field" value={form.designation_level} onChange={(e) => setForm({ ...form, designation_level: e.target.value, designation_title: '' })}>
+                {DESIGNATION_LEVELS.map((l) => (
+                  <option key={l.value} value={l.value}>{l.label}</option>
+                ))}
+              </select>
+            </div>
+            {form.designation_level && (
+              <div>
+                <Label>Designation Title</Label>
+                <select className="input-field" value={form.designation_title} onChange={(e) => setForm({ ...form, designation_title: e.target.value })}>
+                  <option value="">Select title…</option>
+                  {(DESIGNATION_TITLES[form.designation_level] || []).map((t) => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
           <div>
             <Label>Passport Size Photo (Optional)</Label>
