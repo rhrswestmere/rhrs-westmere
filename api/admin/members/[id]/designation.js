@@ -1,7 +1,7 @@
-import { ok, fail } from '../../_lib/http.js'
-import { requireAdmin } from '../../_lib/auth.js'
-import { supabase } from '../../_lib/supabase.js'
-import { DESIGNATION_QUOTA, padSerial, isValidLevel } from '../../_lib/designations.js'
+import { ok, fail } from '../../../_lib/http.js'
+import { requireAdmin } from '../../../_lib/auth.js'
+import { supabase } from '../../../_lib/supabase.js'
+import { DESIGNATION_QUOTA, padSerial, isValidLevel } from '../../../_lib/designations.js'
 
 function readBody(req) {
   return new Promise((resolve, reject) => {
