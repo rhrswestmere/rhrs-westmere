@@ -118,8 +118,8 @@ export default function IdCardPDF({ data }) {
             <Text style={{ fontWeight: '600', color: '#2B2113', fontSize: 8.5, lineHeight: 1 }}>{blood}</Text>
           </View>
 
-          {/* Mobile — x:224 y:586 w:111 h:17 */}
-          <View style={{ position: 'absolute', left: fp(224), top: fy(586), width: fw(111), height: fh(17), justifyContent: 'flex-end', paddingBottom: fh(1) }}>
+          {/* Mobile — x:224 y:584 w:111 h:17 */}
+          <View style={{ position: 'absolute', left: fp(224), top: fy(584), width: fw(111), height: fh(17), justifyContent: 'flex-end', paddingBottom: fh(1) }}>
             <Text style={{ fontWeight: '600', color: '#2B2113', fontFamily: 'Courier', fontSize: 8.5, letterSpacing: 0.3, lineHeight: 1 }}>{mobile}</Text>
           </View>
 
