@@ -3,15 +3,23 @@ import { requireAdmin } from '../_lib/auth.js'
 import { supabase } from '../_lib/supabase.js'
 
 export default async function handler(req, res) {
-  if (!(await requireAdmin(req, res))) return
-
   if (req.method === 'GET') {
-    const { data, error } = await supabase
+    const authHeader = req.headers?.authorization
+    const isAdmin = authHeader && authHeader.startsWith('Bearer ')
+
+    let query = supabase
       .from('gallery_photos')
       .select('*')
       .order('sort_order', { ascending: true, nullsFirst: true })
       .order('created_at', { ascending: false })
 
+    if (!isAdmin) {
+      query = query.eq('is_visible', true)
+    }
+
+    if (isAdmin && !(await requireAdmin(req, res))) return
+
+    const { data, error } = await query
     if (error) return fail(res, 500, error.message)
     return ok(res, data)
   }

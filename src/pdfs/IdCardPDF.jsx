@@ -79,13 +79,7 @@ export default function IdCardPDF({ data }) {
   const blood = data?.blood_group || '---'
   const validDate = fmtValidUpto(data?.created_at)
 
-  const qrData = JSON.stringify({
-    name: fullName,
-    designation: desig,
-    memberId,
-    bloodGroup: blood,
-    mobile,
-  })
+  const verifyUrl = `https://rhrs.co.in/verify?memberId=${encodeURIComponent(memberId)}`
 
   return (
     <Document>
@@ -94,12 +88,12 @@ export default function IdCardPDF({ data }) {
         <View style={root}>
           <Image src="/id-front.png" style={bg} />
 
-          {/* Member Photo — extended 28px down + 20px left, top-right unchanged */}
+          {/* Member Photo — extended 23px down (was 28) + 20px left, top-right unchanged */}
           {photo && (
             <Image src={photo} style={{
               position: 'absolute',
               left: fp(164), top: fy(314),
-              width: fw(182), height: fh(173),
+              width: fw(182), height: fh(168),
               objectFit: 'cover',
             }} />
           )}
@@ -136,7 +130,7 @@ export default function IdCardPDF({ data }) {
 
           {/* FRONT QR = SAME as BACK QR — x:386 y:488 w:101 h:101 */}
           <View style={{ position: 'absolute', left: fp(386), top: fy(488), width: fw(101), height: fh(101), alignItems: 'center', justifyContent: 'center' }}>
-            <QRBox value={qrData} size={fw(101)} />
+            <QRBox value={verifyUrl} size={fw(101)} />
           </View>
         </View>
       </Page>
@@ -148,7 +142,7 @@ export default function IdCardPDF({ data }) {
 
           {/* BACK QR — x:191 y:508 w:59 h:59 */}
           <View style={{ position: 'absolute', left: bx(191), top: by(508), width: bw(59), height: bh(59), alignItems: 'center', justifyContent: 'center' }}>
-            <QRBox value={qrData} size={bw(59)} />
+            <QRBox value={verifyUrl} size={bw(59)} />
           </View>
         </View>
       </Page>
