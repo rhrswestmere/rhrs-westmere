@@ -93,7 +93,7 @@ export default function IdCardPDF({ data }) {
             <Image src={photo} style={{
               position: 'absolute',
               left: fp(166), top: fy(314),
-              width: fw(178), height: fh(166),
+              width: fw(178), height: fh(164),
               objectFit: 'cover',
             }} />
           )}
