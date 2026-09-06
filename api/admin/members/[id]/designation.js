@@ -24,39 +24,6 @@ export default async function handler(req, res) {
   const { id } = req.query
   if (!id) return fail(res, 400, 'id is required')
 
-  const url = new URL(req.url, 'http://localhost')
-  const action = url.searchParams.get('action')
-
-  if (action === 'status') {
-    if (req.method === 'PATCH') {
-      const body = await readBody(req)
-      const isActive = body.is_active
-      if (typeof isActive !== 'boolean') return fail(res, 400, 'is_active boolean is required')
-
-      const { data, error } = await supabase
-        .from('members')
-        .update({ is_active: isActive })
-        .eq('id', id)
-        .select('*')
-        .single()
-
-      if (error) return fail(res, 500, error.message)
-      return ok(res, data)
-    }
-
-    if (req.method === 'DELETE') {
-      const { error } = await supabase
-        .from('members')
-        .delete()
-        .eq('id', id)
-
-      if (error) return fail(res, 500, error.message)
-      return ok(res, { deleted: true })
-    }
-
-    return fail(res, 405, 'Method not allowed')
-  }
-
   if (req.method === 'POST') {
     const body = await readBody(req)
 
@@ -106,7 +73,42 @@ export default async function handler(req, res) {
     return ok(res, data)
   }
 
+  if (req.method === 'PATCH') {
+    const body = await readBody(req)
+    const action = body?.action
+
+    if (action === 'status') {
+      const isActive = body.is_active
+      if (typeof isActive !== 'boolean') return fail(res, 400, 'is_active boolean is required')
+
+      const { data, error } = await supabase
+        .from('members')
+        .update({ is_active: isActive })
+        .eq('id', id)
+        .select('*')
+        .single()
+
+      if (error) return fail(res, 500, error.message)
+      return ok(res, data)
+    }
+
+    return fail(res, 400, 'Invalid action')
+  }
+
   if (req.method === 'DELETE') {
+    const body = await readBody(req)
+    const action = body?.action
+
+    if (action === 'status') {
+      const { error } = await supabase
+        .from('members')
+        .delete()
+        .eq('id', id)
+
+      if (error) return fail(res, 500, error.message)
+      return ok(res, { deleted: true })
+    }
+
     const { data, error } = await supabase
       .from('members')
       .update({
