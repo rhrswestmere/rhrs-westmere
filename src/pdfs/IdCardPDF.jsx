@@ -88,12 +88,12 @@ export default function IdCardPDF({ data }) {
         <View style={root}>
           <Image src="/id-front.png" style={bg} />
 
-          {/* Member Photo — extended 23px down (was 28) + 20px left, top-right unchanged */}
+          {/* Member Photo — trimmed 2px from each side + 2px from bottom */}
           {photo && (
             <Image src={photo} style={{
               position: 'absolute',
-              left: fp(164), top: fy(314),
-              width: fw(182), height: fh(168),
+              left: fp(166), top: fy(314),
+              width: fw(178), height: fh(166),
               objectFit: 'cover',
             }} />
           )}
