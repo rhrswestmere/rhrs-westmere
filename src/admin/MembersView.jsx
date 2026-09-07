@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useState } from 'react'
 import { searchMembers, toggleMemberStatus, deleteMember } from './api'
+import { postJSON } from '../lib/api'
 import { DESIGNATION_LEVELS, DESIGNATION_LABELS } from './designations'
 import { pdfUrl } from '../pdfs/utils'
 
@@ -120,6 +121,32 @@ export default function MembersView({ token }) {
       setPdf(url)
     } catch (err) {
       console.error('PDF generation failed:', err)
+    } finally {
+      setPdfBusy(false)
+    }
+  }
+
+  const handleAppointmentLetter = async () => {
+    if (!selected) return
+    setPdfBusy(true)
+    try {
+      const today = new Date().toISOString().split('T')[0]
+      const apptData = await postJSON('/api/appointments', {
+        full_name: selected.full_name,
+        designation: 'Membership Confirmation',
+        from_date: today,
+        duration: '10:00',
+      })
+      const mod = await import('../pdfs/AppointmentPDF')
+      const url = await pdfUrl(<mod.default data={apptData} />)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `RHRS-APPT-${apptData.appointment_no}.pdf`
+      link.click()
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error('Appointment letter failed:', err)
+      setError('Appointment letter banane me error: ' + err.message)
     } finally {
       setPdfBusy(false)
     }
@@ -271,6 +298,9 @@ export default function MembersView({ token }) {
                           <div className="flex flex-wrap gap-3">
                             <button onClick={handlePdf} disabled={pdfBusy} className="btn-saffron">
                               {pdfBusy ? 'Preparing…' : '⬇ ID Card PDF'}
+                            </button>
+                            <button onClick={handleAppointmentLetter} disabled={pdfBusy} className="border border-saffron/40 text-saffron text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-sm hover:bg-saffron hover:text-white transition-all cursor-pointer">
+                              {pdfBusy ? 'Preparing…' : '▣ Appointment Letter'}
                             </button>
                           </div>
                           {pdf && (
