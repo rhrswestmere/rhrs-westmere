@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState, useRef } from 'react'
-import { searchMembers, toggleMemberStatus, deleteMember, editMember } from './api'
+import { searchMembers, toggleMemberStatus, deleteMember, editMember, verifyDesignation } from './api'
 import { getUploadUrl, uploadToSignedUrl } from './api'
 import { postJSON } from '../lib/api'
 import { DESIGNATION_LEVELS, DESIGNATION_LABELS } from './designations'
@@ -342,12 +342,18 @@ export default function MembersView({ token }) {
   const handleDesignationLetter = async () => {
     if (!selected) return
     setPdfBusy(true)
+    setError('')
     try {
+      const verified = await verifyDesignation(token, selected.id)
+      if (!verified.designation_title) {
+        setError('Member ke paas designation nahi hai')
+        return
+      }
       const mod = await import('../pdfs/DesignationAppointmentPDF')
-      const url = await pdfUrl(<mod.default data={selected} />)
+      const url = await pdfUrl(<mod.default data={verified} />)
       const link = document.createElement('a')
       link.href = url
-      link.download = `RHRS-DESIG-${selected.member_id}.pdf`
+      link.download = `RHRS-DESIG-${verified.member_id}.pdf`
       link.click()
       URL.revokeObjectURL(url)
     } catch (err) {

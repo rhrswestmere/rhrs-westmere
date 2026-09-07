@@ -24,6 +24,17 @@ export default async function handler(req, res) {
   const { id } = req.query
   if (!id) return fail(res, 400, 'id is required')
 
+  if (req.method === 'GET') {
+    const { data: member, error } = await supabase
+      .from('members')
+      .select('id, member_id, full_name, designation_level, designation_title, designation_state, designation_number')
+      .eq('id', id)
+      .single()
+    if (error || !member) return fail(res, 404, 'Member not found')
+    if (!member.designation_title) return fail(res, 400, 'Member has no designation assigned')
+    return ok(res, member)
+  }
+
   if (req.method === 'POST') {
     const body = await readBody(req)
 

@@ -16,6 +16,7 @@ export const removeDesignation = (token, id) => sendJSON(`/api/admin/members/${i
 export const toggleMemberStatus = (token, id, isActive) => sendJSON(`/api/admin/members/${id}/designation`, 'PATCH', { action: 'status', is_active: isActive }, token)
 export const deleteMember = (token, id) => sendJSON(`/api/admin/members/${id}/designation`, 'DELETE', { action: 'status' }, token)
 export const editMember = (token, id, payload) => sendJSON(`/api/admin/members/${id}/designation`, 'PATCH', { action: 'edit', ...payload }, token)
+export const verifyDesignation = (token, id) => sendJSON(`/api/admin/members/${id}/designation`, 'GET', {}, token)
 
 export const getHelplines = (token) => getJSON('/api/admin/helplines', token)
 export const addHelpline = (token, payload) => sendJSON('/api/admin/helplines', 'POST', payload, token)
