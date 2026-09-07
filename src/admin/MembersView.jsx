@@ -339,6 +339,25 @@ export default function MembersView({ token }) {
     }
   }
 
+  const handleDesignationLetter = async () => {
+    if (!selected) return
+    setPdfBusy(true)
+    try {
+      const mod = await import('../pdfs/DesignationAppointmentPDF')
+      const url = await pdfUrl(<mod.default data={selected} />)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `RHRS-DESIG-${selected.member_id}.pdf`
+      link.click()
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error('Designation letter failed:', err)
+      setError('Designation letter banane me error: ' + err.message)
+    } finally {
+      setPdfBusy(false)
+    }
+  }
+
   const handleToggleStatus = async (member) => {
     const isActive = member.is_active !== false
     const action = isActive ? 'deactivate' : 'activate'
@@ -494,6 +513,11 @@ export default function MembersView({ token }) {
                             <button onClick={handleAppointmentLetter} disabled={pdfBusy} className="border border-saffron/40 text-saffron text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-sm hover:bg-saffron hover:text-white transition-all cursor-pointer">
                               {pdfBusy ? 'Preparing…' : '▣ Appointment Letter'}
                             </button>
+                            {selected.designation_title && (
+                              <button onClick={handleDesignationLetter} disabled={pdfBusy} className="border border-green-600 text-green-700 text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-sm hover:bg-green-600 hover:text-white transition-all cursor-pointer">
+                                {pdfBusy ? 'Preparing…' : '★ Designation Letter'}
+                              </button>
+                            )}
                           </div>
                           {pdf && (
                             <div className="flex flex-wrap gap-3 items-center mt-3">
