@@ -87,10 +87,48 @@ export default async function handler(req, res) {
         ])
         return ok(res, { type: 'donations', from, to, ...report, summary })
       }
-      return fail(res, 400, 'Invalid report type. Use "members" or "donations".')
+      if (reportType === 'requests') {
+        let query = supabase
+          .from('payments')
+          .select('*', { count: 'exact' })
+          .eq('status', 'pending')
+          .not('requested_level', 'is', null)
+        if (from) query = query.gte('created_at', from)
+        if (to) {
+          const toDate = new Date(to)
+          toDate.setHours(23, 59, 59, 999)
+          query = query.lte('created_at', toDate.toISOString())
+        }
+        const { data, error, count } = await query
+          .order('created_at', { ascending: false })
+          .range((page - 1) * limit, page * limit - 1)
+        if (error) throw error
+        const total = count ?? data.length
+        return ok(res, { type: 'requests', from, to, rows: data, total, page, totalPages: Math.ceil(total / limit) })
+      }
+      return fail(res, 400, 'Invalid report type. Use "members", "donations", or "requests".')
     } catch (err) {
       return fail(res, 500, err.message)
     }
+  }
+
+  if (req.method === 'PATCH') {
+    const body = await readBody(req)
+    const action = body?.action
+    if (action === 'reject') {
+      const paymentId = body?.id
+      if (!paymentId) return fail(res, 400, 'Payment ID is required')
+      const { data, error } = await supabase
+        .from('payments')
+        .update({ status: 'rejected' })
+        .eq('id', paymentId)
+        .eq('status', 'pending')
+        .select('*')
+        .single()
+      if (error) return fail(res, 500, error.message)
+      return ok(res, data)
+    }
+    return fail(res, 400, 'Invalid action')
   }
 
   return fail(res, 405, 'Method not allowed')

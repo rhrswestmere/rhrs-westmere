@@ -152,10 +152,143 @@ function usePdf() {
   return { pdf, pdfBusy, pdfError, generate, clear }
 }
 
+function RequestHigherPost({ memberId, onBack }) {
+  const { loading, error, result, submit } = useSubmit('/api/payments')
+  const [form, setForm] = useState({
+    donor_name: '',
+    amount: '',
+    payment_mode: 'UPI',
+    txn_ref: '',
+    requested_level: '',
+    requested_title: '',
+  })
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    await submit({
+      donor_name: form.donor_name,
+      donation_type: 'Designation Request',
+      amount: Number(form.amount),
+      payment_mode: form.payment_mode,
+      txn_ref: form.txn_ref,
+      requested_level: form.requested_level,
+      requested_title: form.requested_title,
+    })
+  }
+
+  if (result) {
+    return (
+      <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} className="bg-white border border-green-300 rounded-sm overflow-hidden">
+        <div className="h-2 bg-gradient-to-r from-green-600 via-green-500 to-green-600" />
+        <div className="p-6 lg:p-8">
+          <div className="text-center mb-6">
+            <div className="w-14 h-14 mx-auto rounded-full bg-green-600 text-white text-2xl flex items-center justify-center shadow-md mb-3">✓</div>
+            <h3 className="font-heading text-lg font-bold text-ink">Request Submitted!</h3>
+            <p className="text-xs text-ink-muted uppercase tracking-wider mt-1">Admin will review and assign designation</p>
+          </div>
+          <div className="bg-green-50 border border-green-200 rounded-sm p-4 mb-5">
+            <p className="text-[10px] text-green-700 uppercase tracking-wider text-center mb-1">Receipt Number</p>
+            <p className="font-mono text-lg font-bold text-green-700 text-center tracking-wider">{result.receipt_no}</p>
+            <p className="text-[10px] text-green-600 text-center mt-2">
+              Requested: <span className="font-bold">{DESIGNATION_TITLES[form.requested_level]?.find(t => t === form.requested_title) || form.requested_title}</span>
+            </p>
+          </div>
+          <div className="space-y-2">
+            <p className="text-xs text-ink-muted text-center">
+              Aapki request admin ko bhej di gayi hai. Admin verify karke designation assign karega.
+            </p>
+            <button onClick={onBack} className="w-full btn-saffron">
+              ← Back to ID Card
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    )
+  }
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white border border-saffron/30 rounded-sm overflow-hidden">
+      <div className="h-2 bg-gradient-to-r from-green-600 via-saffron to-green-600" />
+      <div className="p-6 lg:p-8">
+        <div className="text-center mb-6 lg:mb-8">
+          <span className="text-4xl block mb-3 text-saffron">★</span>
+          <h3 className="font-heading text-lg font-bold text-ink">Request Higher Post</h3>
+          <p className="text-xs text-ink-muted uppercase tracking-wider mt-1">Min ₹200 donation · Admin approval required</p>
+          <p className="text-[10px] text-ink-muted mt-2">Member ID: <span className="font-mono font-bold text-saffron">{memberId}</span></p>
+        </div>
+        <form className="space-y-4 lg:space-y-5 mb-2" onSubmit={handleSubmit}>
+          <div>
+            <Label>Your Name</Label>
+            <input type="text" required placeholder="Your name" className="input-field" value={form.donor_name} onChange={(e) => setForm({ ...form, donor_name: e.target.value })} />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Designation Level *</Label>
+              <select className="input-field" required value={form.requested_level} onChange={(e) => setForm({ ...form, requested_level: e.target.value, requested_title: '' })}>
+                <option value="">Select level…</option>
+                {DESIGNATION_LEVELS.filter((l) => l.value).map((l) => (
+                  <option key={l.value} value={l.value}>{l.label}</option>
+                ))}
+              </select>
+            </div>
+            {form.requested_level && (
+              <div>
+                <Label>Designation Title *</Label>
+                <select className="input-field" required value={form.requested_title} onChange={(e) => setForm({ ...form, requested_title: e.target.value })}>
+                  <option value="">Select title…</option>
+                  {(DESIGNATION_TITLES[form.requested_level] || []).map((t) => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Amount (₹) — Min ₹200</Label>
+              <input type="number" required min="200" placeholder="200" className="input-field" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} />
+              <div className="flex gap-2 mt-2">
+                {['200', '501', '1001', '5001'].map((amt) => (
+                  <button
+                    key={amt}
+                    type="button"
+                    onClick={() => setForm({ ...form, amount: amt })}
+                    className={`flex-1 border text-[11px] font-bold py-1.5 rounded-sm transition-all duration-200 cursor-pointer ${
+                      form.amount === amt ? 'bg-saffron text-white border-saffron' : 'border-saffron/30 text-saffron hover:bg-saffron hover:text-white'
+                    }`}
+                  >₹{Number(amt).toLocaleString('en-IN')}</button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <Label>Payment Mode</Label>
+              <select className="input-field" value={form.payment_mode} onChange={(e) => setForm({ ...form, payment_mode: e.target.value })}>
+                <option>UPI</option><option>Bank Transfer</option><option>Card</option><option>Cash</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <Label>Transaction / UPI Ref ID *</Label>
+            <input type="text" required placeholder="UPI Transaction ID" className="input-field" value={form.txn_ref} onChange={(e) => setForm({ ...form, txn_ref: e.target.value })} />
+          </div>
+          {error && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-sm px-3 py-2">⚠ {error}</p>}
+          <button type="submit" className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white text-xs font-bold uppercase tracking-wider py-3 rounded-sm hover:from-green-700 hover:to-green-800 transition-all duration-200 cursor-pointer shadow-md" disabled={loading}>
+            {loading ? 'Submitting…' : '★ Submit Request'}
+          </button>
+          <button type="button" onClick={onBack} className="w-full border border-saffron/40 text-saffron text-xs font-bold uppercase tracking-wider py-2.5 hover:bg-saffron hover:text-white transition-all duration-200 cursor-pointer">
+            ← Back to ID Card
+          </button>
+        </form>
+      </div>
+    </motion.div>
+  )
+}
+
 function IdCardForm() {
   const { loading, error, result, submit, reset } = useSubmit('/api/members')
   const { pdf, pdfBusy, pdfError, generate, clear } = usePdf()
-  const [form, setForm] = useState({ full_name: '', address: '', blood_group: 'A+', emergency_contact: '', photo: '', designation_level: '', designation_title: '' })
+  const [form, setForm] = useState({ full_name: '', address: '', blood_group: 'A+', emergency_contact: '', photo: '' })
+  const [showRequest, setShowRequest] = useState(false)
 
   const handlePhoto = (e) => {
     const file = e.target.files && e.target.files[0]
@@ -175,15 +308,8 @@ function IdCardForm() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const payload = { full_name: form.full_name, address: form.address, blood_group: form.blood_group, emergency_contact: form.emergency_contact }
-    if (form.designation_level && form.designation_title) {
-      payload.designation_level = form.designation_level
-      payload.designation_title = form.designation_title
-    }
     const data = await submit(payload)
     if (data) {
-      if (data.designation_warning) {
-        setError(data.designation_warning)
-      }
       generate(() => import('../pdfs/IdCardPDF'), { ...data, photo: form.photo || null })
     }
   }
@@ -191,20 +317,52 @@ function IdCardForm() {
   const handleReset = () => {
     clear()
     reset()
-    setForm({ full_name: '', address: '', blood_group: 'A+', emergency_contact: '', photo: '', designation_level: '', designation_title: '' })
+    setForm({ full_name: '', address: '', blood_group: 'A+', emergency_contact: '', photo: '' })
+    setShowRequest(false)
+  }
+
+  if (showRequest) {
+    return <RequestHigherPost memberId={result.member_id} onBack={() => setShowRequest(false)} />
   }
 
   if (result) {
     return (
-      <SuccessCard
-        title="Membership ID Card"
-        result={result}
-        pdf={pdf}
-        pdfBusy={pdfBusy}
-        error={pdfError}
-        filename={`RHRS-ID-${result.member_id}.pdf`}
-        onReset={handleReset}
-      />
+      <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} className="bg-white border border-saffron/30 rounded-sm overflow-hidden">
+        <div className="h-2 bg-gradient-to-r from-saffron via-gold to-saffron" />
+        <div className="p-6 lg:p-8">
+          <div className="text-center mb-6">
+            <div className="w-14 h-14 mx-auto rounded-full bg-green-600 text-white text-2xl flex items-center justify-center shadow-md mb-3">✓</div>
+            <h3 className="font-heading text-lg font-bold text-ink">Membership ID Card</h3>
+            <p className="text-xs text-ink-muted uppercase tracking-wider mt-1">Successfully generated · Active Member</p>
+          </div>
+          <div className="bg-saffron-bg border border-saffron/20 rounded-sm p-4 mb-5">
+            <p className="text-[10px] text-ink-muted uppercase tracking-wider text-center mb-1">Assigned Member ID</p>
+            <p className="font-mono text-lg font-bold text-saffron-deep text-center tracking-wider">{result.member_id}</p>
+          </div>
+          <div className="space-y-2">
+            {pdf ? (
+              <a href={pdf} download={`RHRS-ID-${result.member_id}.pdf`} className="inline-flex w-full btn-saffron">⬇ Download ID Card PDF</a>
+            ) : pdfBusy ? (
+              <p className="text-center text-xs text-ink-muted py-3">PDF तैयार हो रहा है…</p>
+            ) : null}
+            {pdf && (
+              <a href={pdf} target="_blank" rel="noreferrer" className="block w-full border border-saffron/40 text-saffron text-xs font-bold uppercase tracking-wider py-2.5 text-center hover:bg-saffron hover:text-white transition-all duration-200 cursor-pointer">
+                Preview / Print
+              </a>
+            )}
+            <button
+              type="button"
+              onClick={() => setShowRequest(true)}
+              className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white text-xs font-bold uppercase tracking-wider py-3 rounded-sm hover:from-green-700 hover:to-green-800 transition-all duration-200 cursor-pointer shadow-md"
+            >
+              ★ Request Higher Post (Min ₹200)
+            </button>
+            <button onClick={handleReset} className="w-full border border-saffron/40 text-saffron text-xs font-bold uppercase tracking-wider py-2.5 hover:bg-saffron hover:text-white transition-all duration-200 cursor-pointer">
+              ⟲ Generate Another
+            </button>
+          </div>
+        </div>
+      </motion.div>
     )
   }
 
@@ -237,27 +395,6 @@ function IdCardForm() {
               <Label>Emergency Contact</Label>
               <input type="tel" required placeholder="Phone number" className="input-field" value={form.emergency_contact} onChange={(e) => setForm({ ...form, emergency_contact: e.target.value })} />
             </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Designation Level</Label>
-              <select className="input-field" value={form.designation_level} onChange={(e) => setForm({ ...form, designation_level: e.target.value, designation_title: '' })}>
-                {DESIGNATION_LEVELS.map((l) => (
-                  <option key={l.value} value={l.value}>{l.label}</option>
-                ))}
-              </select>
-            </div>
-            {form.designation_level && (
-              <div>
-                <Label>Designation Title</Label>
-                <select className="input-field" value={form.designation_title} onChange={(e) => setForm({ ...form, designation_title: e.target.value })}>
-                  <option value="">Select title…</option>
-                  {(DESIGNATION_TITLES[form.designation_level] || []).map((t) => (
-                    <option key={t} value={t}>{t}</option>
-                  ))}
-                </select>
-              </div>
-            )}
           </div>
           <div>
             <Label>Passport Size Photo (Optional)</Label>

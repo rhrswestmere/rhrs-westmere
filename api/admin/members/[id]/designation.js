@@ -129,6 +129,70 @@ export default async function handler(req, res) {
       return ok(res, data)
     }
 
+    if (action === 'approve_request') {
+      const { payment_id } = body
+      if (!payment_id) return fail(res, 400, 'payment_id is required')
+
+      const { data: payment, error: payErr } = await supabase
+        .from('payments')
+        .select('*')
+        .eq('id', payment_id)
+        .eq('status', 'pending')
+        .single()
+      if (payErr || !payment) return fail(res, 404, 'Pending payment not found')
+
+      const level = payment.requested_level
+      const title = payment.requested_title
+      if (!isValidLevel(level)) return fail(res, 400, 'Invalid designation level in request')
+
+      const { data: member, error: memberErr } = await supabase
+        .from('members')
+        .select('*')
+        .eq('id', id)
+        .single()
+      if (memberErr || !member) return fail(res, 404, 'Member not found')
+
+      let designationNumber = member.designation_number
+      if (member.designation_level !== level) {
+        const { count, error: countErr } = await supabase
+          .from('members')
+          .select('id', { count: 'exact', head: true })
+          .eq('designation_level', level)
+          .neq('id', id)
+        if (countErr) return fail(res, 500, countErr.message)
+        const used = count || 0
+        if (used >= DESIGNATION_QUOTA) {
+          return fail(res, 409, `Designation quota full: ${level} already has ${used}/${DESIGNATION_QUOTA} members`)
+        }
+        designationNumber = padSerial(used + 1)
+      }
+
+      const { error: updateErr } = await supabase
+        .from('members')
+        .update({
+          designation_level: level,
+          designation_title: title,
+          designation_state: payment.donor_name || null,
+          designation_number: designationNumber,
+        })
+        .eq('id', id)
+      if (updateErr) return fail(res, 500, updateErr.message)
+
+      const { error: payUpdateErr } = await supabase
+        .from('payments')
+        .update({ status: 'approved', member_id: id })
+        .eq('id', payment_id)
+      if (payUpdateErr) return fail(res, 500, payUpdateErr.message)
+
+      const { data: updated, error: fetchErr } = await supabase
+        .from('members')
+        .select('*')
+        .eq('id', id)
+        .single()
+      if (fetchErr) return fail(res, 500, fetchErr.message)
+      return ok(res, updated)
+    }
+
     return fail(res, 400, 'Invalid action')
   }
 

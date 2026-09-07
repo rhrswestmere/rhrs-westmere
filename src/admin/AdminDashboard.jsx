@@ -4,6 +4,7 @@ import RecordsView from './RecordsView'
 import MembersView from './MembersView'
 import HelplinesManager from './HelplinesManager'
 import ReportsView from './ReportsView'
+import RequestsView from './RequestsView'
 
 export default function AdminDashboard({ token, onLogout }) {
   const [tab, setTab] = useState('gallery')
@@ -45,6 +46,9 @@ export default function AdminDashboard({ token, onLogout }) {
           <button onClick={() => setTab('helplines')} className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer rounded-sm ${tab === 'helplines' ? 'bg-saffron text-white shadow-sm' : 'text-ink-muted hover:text-ink'}`}>
             ☎ Helplines
           </button>
+          <button onClick={() => setTab('requests')} className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer rounded-sm ${tab === 'requests' ? 'bg-saffron text-white shadow-sm' : 'text-ink-muted hover:text-ink'}`}>
+            📋 Requests
+          </button>
         </div>
 
         {tab === 'gallery' && <GalleryManager token={token} />}
@@ -52,6 +56,7 @@ export default function AdminDashboard({ token, onLogout }) {
         {tab === 'records' && <RecordsView token={token} />}
         {tab === 'reports' && <ReportsView token={token} />}
         {tab === 'helplines' && <HelplinesManager token={token} />}
+        {tab === 'requests' && <RequestsView token={token} />}
       </div>
     </div>
   )

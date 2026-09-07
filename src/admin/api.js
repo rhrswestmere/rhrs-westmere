@@ -24,6 +24,10 @@ export const deleteHelpline = (token, id) => sendJSON(`/api/admin/helplines?id=$
 
 export const getReport = (token, type, from, to, page, limit) => sendJSON('/api/admin/records', 'POST', { type, from, to, page, limit }, token)
 
+export const getRequests = (token) => sendJSON('/api/admin/records', 'POST', { type: 'requests' }, token)
+export const approveRequest = (token, memberId, paymentId) => sendJSON(`/api/admin/members/${memberId}/designation`, 'PATCH', { action: 'approve_request', payment_id: paymentId }, token)
+export const rejectRequest = (token, paymentId) => sendJSON('/api/admin/records', 'PATCH', { action: 'reject', id: paymentId }, token)
+
 export async function uploadToSignedUrl(signedUrl, file) {
   const res = await fetch(signedUrl, {
     method: 'PUT',
