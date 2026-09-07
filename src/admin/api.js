@@ -10,7 +10,7 @@ export const updateGalleryPhoto = (token, id, payload) => sendJSON(`/api/admin/g
 export const deleteGalleryPhoto = (token, id) => sendJSON(`/api/admin/gallery?id=${id}`, 'DELETE', {}, token)
 export const getUploadUrl = (token, filename) => sendJSON('/api/admin/upload-url', 'POST', { filename }, token)
 export const getRecords = (token) => getJSON('/api/admin/records', token)
-export const searchMembers = (token, q) => sendJSON('/api/admin/members', 'POST', { q }, token)
+export const searchMembers = (token, q, page, limit, from, to) => sendJSON('/api/admin/members', 'POST', { q, page, limit, from, to }, token)
 export const assignDesignation = (token, id, payload) => sendJSON(`/api/admin/members/${id}/designation`, 'POST', payload, token)
 export const removeDesignation = (token, id) => sendJSON(`/api/admin/members/${id}/designation`, 'DELETE', {}, token)
 export const toggleMemberStatus = (token, id, isActive) => sendJSON(`/api/admin/members/${id}/designation`, 'PATCH', { action: 'status', is_active: isActive }, token)
@@ -20,6 +20,8 @@ export const getHelplines = (token) => getJSON('/api/admin/helplines', token)
 export const addHelpline = (token, payload) => sendJSON('/api/admin/helplines', 'POST', payload, token)
 export const updateHelpline = (token, id, payload) => sendJSON(`/api/admin/helplines?id=${id}`, 'PATCH', payload, token)
 export const deleteHelpline = (token, id) => sendJSON(`/api/admin/helplines?id=${id}`, 'DELETE', {}, token)
+
+export const getReport = (token, type, from, to, page, limit) => sendJSON('/api/admin/records', 'POST', { type, from, to, page, limit }, token)
 
 export async function uploadToSignedUrl(signedUrl, file) {
   const res = await fetch(signedUrl, {

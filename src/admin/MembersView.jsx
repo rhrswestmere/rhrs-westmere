@@ -54,16 +54,19 @@ export default function MembersView({ token }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [selected, setSelected] = useState(null)
+  const [page, setPage] = useState(1)
+  const [fromDate, setFromDate] = useState('')
+  const [toDate, setToDate] = useState('')
 
   const [pdf, setPdf] = useState(null)
   const [pdfBusy, setPdfBusy] = useState(false)
   const [statusBusy, setStatusBusy] = useState(false)
 
-  const load = async (q = query) => {
+  const load = async (q = query, p = page, from = fromDate, to = toDate) => {
     setLoading(true)
     setError('')
     try {
-      const res = await searchMembers(token, q)
+      const res = await searchMembers(token, q, p, 20, from || null, to || null)
       setData(res)
     } catch (err) {
       setError(err.message)
@@ -73,13 +76,31 @@ export default function MembersView({ token }) {
   }
 
   useEffect(() => {
-    load('')
+    load('', 1, '', '')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token])
 
   const handleSearch = (e) => {
     e.preventDefault()
-    load()
+    setPage(1)
+    load(query, 1)
+  }
+
+  const handleDateFilter = () => {
+    setPage(1)
+    load(query, 1, fromDate, toDate)
+  }
+
+  const handleClearDates = () => {
+    setFromDate('')
+    setToDate('')
+    setPage(1)
+    load(query, 1, '', '')
+  }
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage)
+    load(query, newPage)
   }
 
   const handleSelect = (member) => {
@@ -137,6 +158,7 @@ export default function MembersView({ token }) {
   }
 
   const quota = data?.quota
+  const pagination = data?.pagination
   const members = data?.members || []
 
   return (
@@ -157,7 +179,33 @@ export default function MembersView({ token }) {
             {loading ? 'Searching…' : '🔍 Search'}
           </button>
         </div>
-        <p className="text-[11px] text-ink-muted">Sare members dikhane ke liye search khali chhod do.</p>
+
+        <div className="flex flex-wrap items-end gap-3 mb-3">
+          <div>
+            <label className="text-xs font-semibold text-ink-muted uppercase tracking-wider block mb-1.5">From Date</label>
+            <input type="date" className="input-field" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-ink-muted uppercase tracking-wider block mb-1.5">To Date</label>
+            <input type="date" className="input-field" value={toDate} onChange={(e) => setToDate(e.target.value)} />
+          </div>
+          <button onClick={handleDateFilter} disabled={loading} className="btn-saffron">
+            Filter
+          </button>
+          {(fromDate || toDate) && (
+            <button onClick={handleClearDates} className="border border-border text-ink-muted text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-sm hover:bg-saffron-bg transition-all cursor-pointer">
+              Clear Dates
+            </button>
+          )}
+        </div>
+
+        {pagination && (
+          <p className="text-[11px] text-ink-muted">
+            Showing {members.length} of {pagination.total} members
+            {fromDate || toDate ? ` (filtered)` : ''}
+            {pagination.totalPages > 1 ? ` · Page ${pagination.page} of ${pagination.totalPages}` : ''}
+          </p>
+        )}
       </div>
 
       {quota && (
@@ -184,7 +232,7 @@ export default function MembersView({ token }) {
 
       <div className="bg-white border border-border rounded-sm overflow-hidden">
         <div className="px-5 py-4 bg-saffron-bg border-b border-saffron/20 flex justify-between items-center">
-          <h3 className="font-heading text-sm font-bold text-ink">Members ({members.length})</h3>
+          <h3 className="font-heading text-sm font-bold text-ink">Members ({pagination?.total || members.length})</h3>
         </div>
         {members.length === 0 ? (
           <p className="text-xs text-ink-muted px-5 py-6 text-center">Koi member nahi mila.</p>
@@ -240,6 +288,28 @@ export default function MembersView({ token }) {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {pagination && pagination.totalPages > 1 && (
+          <div className="px-5 py-4 border-t border-border flex items-center justify-between">
+            <button
+              onClick={() => handlePageChange(pagination.page - 1)}
+              disabled={pagination.page <= 1}
+              className="text-xs font-bold uppercase tracking-wider text-saffron border border-saffron/40 px-4 py-2 rounded-sm hover:bg-saffron hover:text-white transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              ← Prev
+            </button>
+            <span className="text-xs text-ink-muted">
+              Page {pagination.page} / {pagination.totalPages}
+            </span>
+            <button
+              onClick={() => handlePageChange(pagination.page + 1)}
+              disabled={pagination.page >= pagination.totalPages}
+              className="text-xs font-bold uppercase tracking-wider text-saffron border border-saffron/40 px-4 py-2 rounded-sm hover:bg-saffron hover:text-white transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Next →
+            </button>
           </div>
         )}
       </div>

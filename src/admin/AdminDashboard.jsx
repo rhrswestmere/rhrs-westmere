@@ -3,6 +3,7 @@ import GalleryManager from './GalleryManager'
 import RecordsView from './RecordsView'
 import MembersView from './MembersView'
 import HelplinesManager from './HelplinesManager'
+import ReportsView from './ReportsView'
 
 export default function AdminDashboard({ token, onLogout }) {
   const [tab, setTab] = useState('gallery')
@@ -28,7 +29,7 @@ export default function AdminDashboard({ token, onLogout }) {
       </header>
 
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-8">
-        <div className="inline-flex bg-white border border-border rounded-sm p-1 gap-1 shadow-sm mb-8">
+        <div className="inline-flex bg-white border border-border rounded-sm p-1 gap-1 shadow-sm mb-8 flex-wrap">
           <button onClick={() => setTab('gallery')} className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer rounded-sm ${tab === 'gallery' ? 'bg-saffron text-white shadow-sm' : 'text-ink-muted hover:text-ink'}`}>
             ◈ Gallery
           </button>
@@ -38,6 +39,9 @@ export default function AdminDashboard({ token, onLogout }) {
           <button onClick={() => setTab('records')} className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer rounded-sm ${tab === 'records' ? 'bg-saffron text-white shadow-sm' : 'text-ink-muted hover:text-ink'}`}>
             ▣ Records
           </button>
+          <button onClick={() => setTab('reports')} className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer rounded-sm ${tab === 'reports' ? 'bg-saffron text-white shadow-sm' : 'text-ink-muted hover:text-ink'}`}>
+            📊 Reports
+          </button>
           <button onClick={() => setTab('helplines')} className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer rounded-sm ${tab === 'helplines' ? 'bg-saffron text-white shadow-sm' : 'text-ink-muted hover:text-ink'}`}>
             ☎ Helplines
           </button>
@@ -46,6 +50,7 @@ export default function AdminDashboard({ token, onLogout }) {
         {tab === 'gallery' && <GalleryManager token={token} />}
         {tab === 'members' && <MembersView token={token} />}
         {tab === 'records' && <RecordsView token={token} />}
+        {tab === 'reports' && <ReportsView token={token} />}
         {tab === 'helplines' && <HelplinesManager token={token} />}
       </div>
     </div>
