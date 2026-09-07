@@ -8,7 +8,8 @@ export default async function handler(req, res) {
 
   const body = await readBody(req)
   const filename = (body.filename || 'image.png').replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase()
-  const path = `gallery/${Date.now()}-${filename}`
+  const folder = body.folder === 'members' ? 'members' : 'gallery'
+  const path = `${folder}/${Date.now()}-${filename}`
 
   const { data, error } = await supabase.storage.from('gallery').createSignedUploadUrl(path)
   if (error) return fail(res, 500, error.message)

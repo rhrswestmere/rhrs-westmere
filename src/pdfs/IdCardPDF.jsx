@@ -74,7 +74,7 @@ export default function IdCardPDF({ data }) {
   const memberId = data?.member_id || '---'
   const fullName = data?.full_name || '---'
   const mobile = data?.emergency_contact || '---'
-  const photo = data?.photo || null
+  const photo = data?.photo_url || data?.photo || null
   const desig = data?.designation_title || 'ACTIVE MEMBER'
   const blood = data?.blood_group || '---'
   const validDate = fmtValidUpto(data?.created_at)

@@ -1,10 +1,11 @@
-import { Fragment, useEffect, useState } from 'react'
-import { searchMembers, toggleMemberStatus, deleteMember } from './api'
+import { Fragment, useEffect, useState, useRef } from 'react'
+import { searchMembers, toggleMemberStatus, deleteMember, editMember } from './api'
+import { getUploadUrl, uploadToSignedUrl } from './api'
 import { postJSON } from '../lib/api'
 import { DESIGNATION_LEVELS, DESIGNATION_LABELS } from './designations'
 import { pdfUrl } from '../pdfs/utils'
 
-function MemberRow({ member, onSelect, selected, onToggleStatus, onDelete, saving }) {
+function MemberRow({ member, onSelect, selected, onEdit, onToggleStatus, onDelete, saving }) {
   const hasDesig = !!member.designation_level
   const isActive = member.is_active !== false
   return (
@@ -23,6 +24,12 @@ function MemberRow({ member, onSelect, selected, onToggleStatus, onDelete, savin
       </td>
       <td className="px-4 py-3">
         <div className="flex flex-wrap gap-1.5">
+          <button
+            onClick={() => onEdit(member)}
+            className="text-[10px] font-bold uppercase tracking-wider text-blue-600 border border-blue-300 px-3 py-1.5 rounded-sm hover:bg-blue-600 hover:text-white transition-all cursor-pointer"
+          >
+            Edit
+          </button>
           <button
             onClick={() => onSelect(member)}
             className="text-[10px] font-bold uppercase tracking-wider text-saffron border border-saffron/40 px-3 py-1.5 rounded-sm hover:bg-saffron hover:text-white transition-all cursor-pointer"
@@ -49,12 +56,178 @@ function MemberRow({ member, onSelect, selected, onToggleStatus, onDelete, savin
   )
 }
 
+function EditForm({ member, token, onSave, onCancel }) {
+  const [form, setForm] = useState({
+    full_name: member.full_name || '',
+    address: member.address || '',
+    blood_group: member.blood_group || 'A+',
+    emergency_contact: member.emergency_contact || '',
+    member_id: member.member_id || '',
+    designation_level: member.designation_level || '',
+    designation_title: member.designation_title || '',
+    designation_state: member.designation_state || '',
+  })
+  const [photo, setPhoto] = useState(null)
+  const [photoPreview, setPhotoPreview] = useState(member.photo_url || '')
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+  const fileRef = useRef()
+
+  const handlePhoto = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Photo 5MB se badi nahi honi chahiye')
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = () => {
+      setPhoto(file)
+      setPhotoPreview(reader.result)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!form.full_name.trim()) { setError('Name required hai'); return }
+    if (!form.address.trim()) { setError('Address required hai'); return }
+    if (!form.emergency_contact.trim()) { setError('Mobile required hai'); return }
+
+    setSaving(true)
+    setError('')
+    try {
+      let photoUrl = member.photo_url || null
+      if (photo) {
+        const uploadData = await getUploadUrl(token, photo.name)
+        await uploadToSignedUrl(uploadData.signedUrl, photo)
+        photoUrl = uploadData.publicUrl
+      }
+
+      const payload = {
+        full_name: form.full_name,
+        address: form.address,
+        blood_group: form.blood_group,
+        emergency_contact: form.emergency_contact,
+        member_id: form.member_id,
+        photo_url: photoUrl,
+      }
+      if (form.designation_level) {
+        payload.designation_level = form.designation_level
+        payload.designation_title = form.designation_title
+        payload.designation_state = form.designation_state
+      }
+
+      const updated = await editMember(token, member.id, payload)
+      onSave(updated)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <tr className="bg-blue-50/50 border-b border-blue-200">
+      <td colSpan={5} className="px-5 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <p className="text-[11px] font-bold text-ink uppercase tracking-wider">Edit Member</p>
+          <span className="text-xs font-mono text-saffron">{member.member_id}</span>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div>
+              <label className="text-[10px] font-bold text-ink-muted uppercase tracking-wider block mb-1">Full Name *</label>
+              <input type="text" required className="input-field" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold text-ink-muted uppercase tracking-wider block mb-1">Member ID</label>
+              <input type="text" className="input-field font-mono" value={form.member_id} onChange={(e) => setForm({ ...form, member_id: e.target.value })} />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold text-ink-muted uppercase tracking-wider block mb-1">Mobile *</label>
+              <input type="tel" required className="input-field" value={form.emergency_contact} onChange={(e) => setForm({ ...form, emergency_contact: e.target.value })} />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold text-ink-muted uppercase tracking-wider block mb-1">Blood Group</label>
+              <select className="input-field" value={form.blood_group} onChange={(e) => setForm({ ...form, blood_group: e.target.value })}>
+                <option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
+              </select>
+            </div>
+            <div className="sm:col-span-2">
+              <label className="text-[10px] font-bold text-ink-muted uppercase tracking-wider block mb-1">Address *</label>
+              <input type="text" required className="input-field" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold text-ink-muted uppercase tracking-wider block mb-1">Designation Level</label>
+              <select className="input-field" value={form.designation_level} onChange={(e) => setForm({ ...form, designation_level: e.target.value, designation_title: '' })}>
+                <option value="">None</option>
+                {DESIGNATION_LEVELS.map((l) => <option key={l} value={l}>{DESIGNATION_LABELS[l]}</option>)}
+              </select>
+            </div>
+            {form.designation_level && (
+              <>
+                <div>
+                  <label className="text-[10px] font-bold text-ink-muted uppercase tracking-wider block mb-1">Designation Title</label>
+                  <input type="text" className="input-field" value={form.designation_title} onChange={(e) => setForm({ ...form, designation_title: e.target.value })} placeholder="e.g. State President" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-ink-muted uppercase tracking-wider block mb-1">State / Region</label>
+                  <input type="text" className="input-field" value={form.designation_state} onChange={(e) => setForm({ ...form, designation_state: e.target.value })} placeholder="Optional" />
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div>
+              <label className="text-[10px] font-bold text-ink-muted uppercase tracking-wider block mb-1">Photo</label>
+              <div className="flex items-center gap-3">
+                <div className="w-14 h-[64px] rounded-sm border-2 border-dashed border-blue-300 bg-white overflow-hidden flex items-center justify-center shrink-0">
+                  {photoPreview ? (
+                    <img src={photoPreview} alt="preview" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-[8px] text-ink-muted/60 text-center leading-tight px-1">PHOTO</span>
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <label className="inline-block text-[10px] font-bold uppercase tracking-wider border border-blue-300 text-blue-600 px-3 py-1.5 rounded-sm hover:bg-blue-600 hover:text-white transition-all cursor-pointer">
+                    {photo ? 'Change' : 'Upload'}
+                    <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhoto} />
+                  </label>
+                  {photo && (
+                    <button type="button" onClick={() => { setPhoto(null); setPhotoPreview(member.photo_url || '') }} className="block text-[9px] text-red-600 underline cursor-pointer">
+                      Remove
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {error && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-sm px-3 py-2">⚠ {error}</p>}
+
+          <div className="flex gap-3">
+            <button type="submit" disabled={saving} className="btn-saffron">
+              {saving ? 'Saving…' : '✓ Save Changes'}
+            </button>
+            <button type="button" onClick={onCancel} disabled={saving} className="border border-border text-ink-muted text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-sm hover:bg-saffron-bg transition-all cursor-pointer">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </td>
+    </tr>
+  )
+}
+
 export default function MembersView({ token }) {
   const [query, setQuery] = useState('')
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [selected, setSelected] = useState(null)
+  const [editing, setEditing] = useState(null)
   const [page, setPage] = useState(1)
   const [fromDate, setFromDate] = useState('')
   const [toDate, setToDate] = useState('')
@@ -106,8 +279,22 @@ export default function MembersView({ token }) {
 
   const handleSelect = (member) => {
     setSelected(member)
+    setEditing(null)
     if (pdf) URL.revokeObjectURL(pdf)
     setPdf(null)
+  }
+
+  const handleEdit = (member) => {
+    setEditing(member)
+    setSelected(null)
+    if (pdf) URL.revokeObjectURL(pdf)
+    setPdf(null)
+  }
+
+  const handleEditSave = (updated) => {
+    setEditing(null)
+    load()
+    if (selected?.id === updated.id) setSelected(updated)
   }
 
   const handlePdf = async () => {
@@ -176,6 +363,7 @@ export default function MembersView({ token }) {
     try {
       await deleteMember(token, member.id)
       if (selected?.id === member.id) setSelected(null)
+      if (editing?.id === member.id) setEditing(null)
       await load()
     } catch (err) {
       setError(err.message)
@@ -278,8 +466,12 @@ export default function MembersView({ token }) {
               <tbody>
                 {members.map((m) => (
                   <Fragment key={m.id}>
-                    <MemberRow member={m} selected={selected?.id === m.id} onSelect={handleSelect} onToggleStatus={handleToggleStatus} onDelete={handleDelete} saving={statusBusy} />
-                    {selected?.id === m.id && (
+                    {editing?.id === m.id ? (
+                      <EditForm member={m} token={token} onSave={handleEditSave} onCancel={() => setEditing(null)} />
+                    ) : (
+                      <MemberRow member={m} selected={selected?.id === m.id} onSelect={handleSelect} onEdit={handleEdit} onToggleStatus={handleToggleStatus} onDelete={handleDelete} saving={statusBusy} />
+                    )}
+                    {selected?.id === m.id && editing?.id !== m.id && (
                       <tr className="bg-saffron-bg/40 border-b border-saffron/20">
                         <td colSpan={5} className="px-5 py-4">
                           <div className="flex flex-wrap items-center justify-between gap-2 mb-2">

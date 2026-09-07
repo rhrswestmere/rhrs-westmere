@@ -92,6 +92,43 @@ export default async function handler(req, res) {
       return ok(res, data)
     }
 
+    if (action === 'edit') {
+      const { full_name, address, blood_group, emergency_contact, member_id, photo_url, designation_level, designation_title, designation_state } = body
+
+      if (!full_name || !full_name.trim()) return fail(res, 400, 'full_name is required')
+      if (!address || !address.trim()) return fail(res, 400, 'address is required')
+      if (!blood_group) return fail(res, 400, 'blood_group is required')
+      if (!emergency_contact || !emergency_contact.trim()) return fail(res, 400, 'emergency_contact is required')
+
+      const updateData = {
+        full_name: full_name.trim(),
+        address: address.trim(),
+        blood_group,
+        emergency_contact: emergency_contact.trim(),
+      }
+
+      if (photo_url !== undefined) updateData.photo_url = photo_url || null
+      if (member_id !== undefined && member_id.trim()) {
+        const { data: existing } = await supabase.from('members').select('member_id').eq('member_id', member_id.trim()).neq('id', id).single()
+        if (existing) return fail(res, 409, 'Member ID already exists')
+        updateData.member_id = member_id.trim()
+      }
+
+      if (designation_level !== undefined) updateData.designation_level = designation_level || null
+      if (designation_title !== undefined) updateData.designation_title = designation_title || null
+      if (designation_state !== undefined) updateData.designation_state = designation_state || null
+
+      const { data, error } = await supabase
+        .from('members')
+        .update(updateData)
+        .eq('id', id)
+        .select('*')
+        .single()
+
+      if (error) return fail(res, 500, error.message)
+      return ok(res, data)
+    }
+
     return fail(res, 400, 'Invalid action')
   }
 
