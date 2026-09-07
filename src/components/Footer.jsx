@@ -65,11 +65,11 @@ export default function Footer() {
               <p><span className="text-white/50">Address:</span> 108, Dharma Marg, New Delhi — 110001</p>
               <p>
                 <span className="text-white/50">Email:</span>{' '}
-                <a href="mailto:contact@rhns.org" className="text-saffron-light hover:text-saffron transition-colors underline underline-offset-2">contact@rhns.org</a>
+                <a href="mailto:rashtriyahindurakshaksangh@gmail.com" className="text-saffron-light hover:text-saffron transition-colors underline underline-offset-2">rashtriyahindurakshaksangh@gmail.com</a>
               </p>
               <p>
                 <span className="text-white/50">Phone:</span>{' '}
-                <a href="tel:+9118001234567" className="text-saffron-light hover:text-saffron transition-colors underline underline-offset-2">+91 1800-123-4567</a>
+                <a href="tel:+9190309369999" className="text-saffron-light hover:text-saffron transition-colors underline underline-offset-2">+91 90309-369999</a>
               </p>
               <div className="flex gap-2 mt-4">
                 {[
