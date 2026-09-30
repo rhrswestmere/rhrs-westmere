@@ -4,6 +4,7 @@ import { getUploadUrl, uploadToSignedUrl } from './api'
 import { postJSON } from '../lib/api'
 import { DESIGNATION_LEVELS, DESIGNATION_LABELS } from './designations'
 import { pdfUrl } from '../pdfs/utils'
+import { buildCardData } from '../pdfs/idCardData'
 
 function MemberRow({ member, onSelect, selected, onEdit, onToggleStatus, onDelete, saving }) {
   const hasDesig = !!member.designation_level
@@ -304,7 +305,7 @@ export default function MembersView({ token }) {
     setPdfBusy(true)
     try {
       const mod = await import('../pdfs/IdCardPDF')
-      const url = await pdfUrl(<mod.default data={selected} />)
+      const url = await pdfUrl(<mod.default data={buildCardData(selected)} />)
       setPdf(url)
     } catch (err) {
       console.error('PDF generation failed:', err)

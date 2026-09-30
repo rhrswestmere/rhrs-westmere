@@ -1,0 +1,119 @@
+{
+  "template_version": "client_final_v1",
+  "status": "FINAL_TEMPLATE_DO_NOT_CHANGE_LAYOUT",
+  "coordinate_system": {
+    "origin": "top-left",
+    "unit": "pixels",
+    "front_reference_size": {
+      "width": 765,
+      "height": 475
+    },
+    "back_reference_size": {
+      "width": 762,
+      "height": 477
+    },
+    "note": "Coordinates are measured against the supplied final reference images. Only front-side fields are dynamic."
+  },
+  "dynamic_fields": {
+    "front": {
+      "photo": {
+        "type": "image",
+        "x": 626,
+        "y": 164,
+        "width": 111,
+        "height": 145,
+        "fit": "cover",
+        "source": "member.photo"
+      },
+      "name": {
+        "type": "text",
+        "x": 157,
+        "y": 173,
+        "width": 451,
+        "height": 27,
+        "source": "member.name",
+        "anchor": "left"
+      },
+      "designation": {
+        "type": "text",
+        "x": 157,
+        "y": 209,
+        "width": 451,
+        "height": 27,
+        "source": "member.designation",
+        "anchor": "left"
+      },
+      "contact": {
+        "type": "text",
+        "x": 157,
+        "y": 245,
+        "width": 451,
+        "height": 27,
+        "source": "member.mobile",
+        "anchor": "left"
+      },
+      "blood_group": {
+        "type": "text",
+        "x": 157,
+        "y": 281,
+        "width": 451,
+        "height": 27,
+        "source": "member.blood_group",
+        "anchor": "left"
+      },
+      "valid_upto": {
+        "type": "text",
+        "x": 157,
+        "y": 317,
+        "width": 451,
+        "height": 27,
+        "source": "member.valid_upto",
+        "anchor": "left",
+        "format": "DD/MM/YYYY",
+        "calculation": "issue_date + 1 calendar year"
+      },
+      "qr": {
+        "type": "qr",
+        "x": 654,
+        "y": 316,
+        "width": 84,
+        "height": 106,
+        "source": "member.verification_url",
+        "fit": "contain",
+        "quiet_zone": 4
+      }
+    },
+    "back": {
+      "dynamic": false,
+      "note": "No dynamic fields. Preserve the supplied back-side artwork exactly as provided."
+    }
+  },
+  "member_data_schema": {
+    "name": "string",
+    "designation": "string",
+    "mobile": "string",
+    "blood_group": "string",
+    "photo": "image",
+    "issue_date": "date",
+    "valid_upto": "auto-calculated",
+    "verification_url": "string"
+  },
+  "static_elements": {
+    "signature": "existing signature in front template — do not modify",
+    "website": "rhrs.co.in",
+    "email": "rashtriyahindurakshaksangh@gmail.com",
+    "all_back_side_content": "static"
+  },
+  "rendering_rules": [
+    "Do not change the final client-approved artwork, layout, dimensions, typography, colors, logo, icons, borders, or static text.",
+    "Do not add Member ID because it is not present as a field on this final template.",
+    "Do not make any back-side field dynamic.",
+    "Photo must be cropped to the photo rectangle without stretching.",
+    "QR must be generated dynamically from member.verification_url and must fit entirely inside the front QR placeholder.",
+    "Valid Upto must be generated as exactly one calendar year after issue_date, not 365 days.",
+    "Keep the existing signature untouched.",
+    "Use the JSON rectangles as the single source of truth for dynamic placement.",
+    "Do not scatter hardcoded coordinates throughout the codebase.",
+    "Before export, validate that text does not overflow its assigned rectangle."
+  ]
+}

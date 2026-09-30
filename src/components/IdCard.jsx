@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { postJSON } from '../lib/api'
 import { pdfUrl, fetchImageBase64 } from '../pdfs/utils'
+import { buildCardData } from '../pdfs/idCardData'
 
 const DESIGNATION_LEVELS = [
   { value: '', label: 'Active Member (Default)' },
@@ -310,7 +311,7 @@ function IdCardForm() {
     const payload = { full_name: form.full_name, address: form.address, blood_group: form.blood_group, emergency_contact: form.emergency_contact }
     const data = await submit(payload)
     if (data) {
-      generate(() => import('../pdfs/IdCardPDF'), { ...data, photo: form.photo || null })
+      generate(() => import('../pdfs/IdCardPDF'), buildCardData({ ...data, photo: form.photo || null }))
     }
   }
 
