@@ -149,13 +149,14 @@ const attemptLayout = (doc, tableRows, scale) => {
   const F = FLOW
   const s = (n) => n * scale
   const cw = F.content
+  const T = F.table
   const pos = {}
   let y = F.top
 
-  pos.title = { top: y, h: F.title.h }
+  pos.title = { top: y, h: F.title.h, size: s(F.title.size) }
   y += F.title.h
 
-  pos.subtitle = { top: y + s(F.subtitle.gapBefore), h: F.subtitle.h }
+  pos.subtitle = { top: y + s(F.subtitle.gapBefore), h: F.subtitle.h, size: s(F.subtitle.size) }
   y = pos.subtitle.top + F.subtitle.h
 
   pos.underline = { top: y + s(F.underline.gapBefore), h: F.underline.h, w: F.underline.w }
@@ -227,7 +228,7 @@ export const computeLayout = (doc) => {
     ...chosen,
     tableRows,
     overflow: chosen.flowBottom > FLOW.flowLimit,
-    titleSize: S(FLOW.title.size),
-    subtitleSize: S(FLOW.subtitle.size),
+    titleSize: chosen.title.size,
+    subtitleSize: chosen.subtitle.size,
   }
 }

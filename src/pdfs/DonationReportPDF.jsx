@@ -1,4 +1,13 @@
-import { Page, View, Document, Text } from '@react-pdf/renderer'
+import { Page, View, Document, Text, Image } from '@react-pdf/renderer'
+import { PAGE, LETTERHEAD, X, Y } from './appointmentLayout'
+
+// Same letterhead treatment as the appointment letter: the artwork keeps its
+// own aspect ratio and covers the whole page; content sits inside the measured
+// content box (canvas px 135..1054 horizontally, 502..1178 vertically).
+const bgHeight = PAGE.h - 0.5
+const bgWidth = bgHeight * (LETTERHEAD.w / LETTERHEAD.h)
+const bgLeft = (PAGE.w - bgWidth) / 2
+const bgTop = (PAGE.h - bgHeight) / 2
 
 const P = (mm) => Number((mm * 2.834645669).toFixed(2))
 
@@ -10,7 +19,6 @@ const fmtDate = (iso) => {
 }
 
 const styles = {
-  page: { padding: P(15), fontFamily: 'Helvetica', fontSize: 9, color: '#1A1100' },
   header: { textAlign: 'center', marginBottom: P(5) },
   title: { fontSize: 16, fontWeight: 'bold', marginBottom: P(2) },
   subtitle: { fontSize: 10, color: '#666' },
@@ -27,7 +35,7 @@ const styles = {
   empty: { textAlign: 'center', padding: P(10), color: '#999', fontSize: 10 },
 }
 
-export default function DonationReportPDF({ data }) {
+export default function DonationReportPDF({ data, bgImage }) {
   const rows = data?.rows || []
   const from = data?.from
   const to = data?.to
@@ -36,7 +44,23 @@ export default function DonationReportPDF({ data }) {
 
   return (
     <Document>
-      <Page wrap={false} size="A4" style={styles.page}>
+      <Page
+        size="A4"
+        style={{
+          margin: 0,
+          paddingTop: Y(502),
+          paddingLeft: X(135),
+          paddingRight: X(136),
+          paddingBottom: Y(493),
+          fontFamily: 'Helvetica',
+          fontSize: 9,
+          color: '#1A1100',
+        }}
+      >
+        <Image
+          src={bgImage || '/letter_head.png'}
+          style={{ position: 'absolute', left: bgLeft, top: bgTop, width: bgWidth, height: bgHeight }}
+        />
         <View style={styles.header}>
           <Text style={styles.title}>Rashtriya Hindu Rakshak Sangh</Text>
           <Text style={styles.subtitle}>Donation Report</Text>

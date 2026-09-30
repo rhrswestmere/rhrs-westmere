@@ -1,4 +1,4 @@
-import { Page, View, Document, Image, Text } from '@react-pdf/renderer'
+import { Page, View, Document, Image, Text, Svg, Polygon } from '@react-pdf/renderer'
 import {
   computeLayout,
   richSegments,
@@ -10,15 +10,19 @@ import {
   PAGE,
   LETTERHEAD,
 } from './appointmentLayout'
+import { buildAppointmentJson } from './appointmentJson'
 
 const LATIN = 'Helvetica'
 const DEVA = 'NotoDeva'
 const BG_SRC_DEFAULT = '/letter_head.png'
 
 // The letterhead keeps its own aspect ratio and is centred, so it can never be
-// stretched: it always covers the whole A4 page.
-const bgWidth = PAGE.h * (LETTERHEAD.w / LETTERHEAD.h)
+// stretched: it always covers the whole A4 page. The half point keeps the image
+// strictly inside the page box (react-pdf refuses oversized page children).
+const bgHeight = PAGE.h - 0.5
+const bgWidth = bgHeight * (LETTERHEAD.w / LETTERHEAD.h)
 const bgLeft = (PAGE.w - bgWidth) / 2
+const bgTop = (PAGE.h - bgHeight) / 2
 
 const box = (top, left, width, height) => ({
   position: 'absolute',
@@ -29,7 +33,8 @@ const box = (top, left, width, height) => ({
 })
 
 export default function AppointmentLetterPDF({ data = {}, bgImage }) {
-  const doc = data
+  // Accepts either the raw API payload or an already-built JSON document.
+  const doc = buildAppointmentJson(data)
   const L = computeLayout(doc)
   const cw = FLOW.content
   const B = FLOW.box
@@ -51,7 +56,7 @@ export default function AppointmentLetterPDF({ data = {}, bgImage }) {
       <Page size="A4" style={{ margin: 0, padding: 0 }}>
         <Image
           src={bgImage || BG_SRC_DEFAULT}
-          style={{ position: 'absolute', left: bgLeft, top: 0, width: bgWidth, height: PAGE.h }}
+          style={{ position: 'absolute', left: bgLeft, top: bgTop, width: bgWidth, height: bgHeight }}
         />
 
         {/* Title */}
@@ -60,9 +65,9 @@ export default function AppointmentLetterPDF({ data = {}, bgImage }) {
             style={{
               fontFamily: LATIN,
               fontWeight: 'bold',
-              fontSize: S(FLOW.title.size),
+              fontSize: S(L.titleSize),
               lineHeight: FLOW.title.lh,
-              letterSpacing: S(FLOW.title.tracking),
+              letterSpacing: S(FLOW.title.tracking * (L.titleSize / FLOW.title.size)),
               color: COLORS.title,
               textAlign: 'center',
             }}
@@ -82,7 +87,7 @@ export default function AppointmentLetterPDF({ data = {}, bgImage }) {
           <Text
             style={{
               fontFamily: DEVA,
-              fontSize: S(FLOW.subtitle.size),
+              fontSize: S(L.subtitleSize),
               lineHeight: FLOW.subtitle.lh,
               color: COLORS.subtitle,
               textAlign: 'center',
@@ -114,17 +119,14 @@ export default function AppointmentLetterPDF({ data = {}, bgImage }) {
               backgroundColor: COLORS.underline,
             }}
           />
-          <View
-            style={{
-              position: 'absolute',
-              left: X(62),
-              top: S(-3.6),
-              width: S(7.4),
-              height: S(7.4),
-              backgroundColor: COLORS.underline,
-              transform: [{ rotate: '45deg' }],
-            }}
-          />
+          <Svg
+            width={X(10.5)}
+            height={Y(10.5)}
+            viewBox="0 0 10 10"
+            style={{ position: 'absolute', left: X(60.75), top: Y(-3.95) }}
+          >
+            <Polygon points="5,0 10,5 5,10 0,5" fill={COLORS.underline} />
+          </Svg>
         </View>
 
         {/* Appointment header box */}

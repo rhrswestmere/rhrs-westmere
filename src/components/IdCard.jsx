@@ -440,7 +440,7 @@ function AppointmentForm() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const data = await submit(form)
-    if (data) generate(() => import('../pdfs/AppointmentPDF'), data, '/appointment-bg.jpg')
+    if (data) generate(() => import('../pdfs/AppointmentLetterPDF'), data, '/letter_head.png')
   }
 
   const handleReset = () => {

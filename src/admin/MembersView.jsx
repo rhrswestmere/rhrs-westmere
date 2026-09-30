@@ -325,7 +325,7 @@ export default function MembersView({ token }) {
         from_date: today,
         duration: '10:00',
       })
-      const mod = await import('../pdfs/AppointmentPDF')
+      const mod = await import('../pdfs/AppointmentLetterPDF')
       const url = await pdfUrl(<mod.default data={apptData} />)
       const link = document.createElement('a')
       link.href = url
