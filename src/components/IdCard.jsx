@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { postJSON } from '../lib/api'
-import { pdfUrl, fetchImageBase64 } from '../pdfs/utils'
+import { pdfUrl, fetchImageBase64, loadPdfModule } from '../pdfs/utils'
 import { buildCardData } from '../pdfs/idCardData'
 
 const DESIGNATION_LEVELS = [
@@ -138,7 +138,7 @@ function usePdf() {
       if (imageUrl) {
         bgImage = await fetchImageBase64(imageUrl)
       }
-      const mod = await loader()
+      const mod = await loadPdfModule(loader)
       const Component = mod.default
       const url = await pdfUrl(<Component data={data} bgImage={bgImage} />)
       setPdf(url)

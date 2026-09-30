@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { getReport } from './api'
-import { pdfUrl } from '../pdfs/utils'
+import { pdfUrl, loadPdfModule } from '../pdfs/utils'
 
 const fmtDate = (iso) =>
   iso ? new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'
@@ -125,9 +125,9 @@ export default function ReportsView({ token }) {
     try {
       let mod
       if (reportType === 'members') {
-        mod = await import('../pdfs/MemberReportPDF')
+        mod = await loadPdfModule(() => import('../pdfs/MemberReportPDF'))
       } else {
-        mod = await import('../pdfs/DonationReportPDF')
+        mod = await loadPdfModule(() => import('../pdfs/DonationReportPDF'))
       }
       const url = await pdfUrl(<mod.default data={data} />)
       const link = document.createElement('a')

@@ -3,7 +3,7 @@ import { searchMembers, toggleMemberStatus, deleteMember, editMember, verifyDesi
 import { getUploadUrl, uploadToSignedUrl } from './api'
 import { postJSON } from '../lib/api'
 import { DESIGNATION_LEVELS, DESIGNATION_LABELS } from './designations'
-import { pdfUrl } from '../pdfs/utils'
+import { pdfUrl, loadPdfModule } from '../pdfs/utils'
 import { buildCardData } from '../pdfs/idCardData'
 
 function MemberRow({ member, onSelect, selected, onEdit, onToggleStatus, onDelete, saving }) {
@@ -304,7 +304,7 @@ export default function MembersView({ token }) {
     setPdf(null)
     setPdfBusy(true)
     try {
-      const mod = await import('../pdfs/IdCardPDF')
+      const mod = await loadPdfModule(() => import('../pdfs/IdCardPDF'))
       const url = await pdfUrl(<mod.default data={buildCardData(selected)} />)
       setPdf(url)
     } catch (err) {
@@ -325,7 +325,7 @@ export default function MembersView({ token }) {
         from_date: today,
         duration: '10:00',
       })
-      const mod = await import('../pdfs/AppointmentLetterPDF')
+      const mod = await loadPdfModule(() => import('../pdfs/AppointmentLetterPDF'))
       const url = await pdfUrl(<mod.default data={apptData} />)
       const link = document.createElement('a')
       link.href = url
@@ -350,7 +350,7 @@ export default function MembersView({ token }) {
         setError('Member ke paas designation nahi hai')
         return
       }
-      const mod = await import('../pdfs/DesignationAppointmentPDF')
+      const mod = await loadPdfModule(() => import('../pdfs/DesignationAppointmentPDF'))
       const url = await pdfUrl(<mod.default data={verified} />)
       const link = document.createElement('a')
       link.href = url
