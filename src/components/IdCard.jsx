@@ -518,7 +518,7 @@ function PaymentForm({ pendingAmount }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const data = await submit({ ...form, amount: Number(form.amount) })
-    if (data) generate(() => import('../pdfs/PaymentSlipPDF'), data, '/appointment-bg.jpg')
+    if (data) generate(() => import('../pdfs/PaymentSlipPDF'), data, '/letter_head.png')
   }
 
   const handleReset = () => {

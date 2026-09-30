@@ -1,5 +1,13 @@
 import { Page, Text, View, Document, Image } from '@react-pdf/renderer'
 import { amountInWords } from './amountWords'
+import { PAGE, LETTERHEAD } from './appointmentLayout'
+
+// Same letterhead background as the appointment letter: aspect ratio preserved,
+// centred, covering the whole A4 page.
+const bgHeight = PAGE.h - 0.5
+const bgWidth = bgHeight * (LETTERHEAD.w / LETTERHEAD.h)
+const bgLeft = (PAGE.w - bgWidth) / 2
+const bgTop = (PAGE.h - bgHeight) / 2
 
 const C = {
   saffron: '#DE651A',
@@ -23,9 +31,10 @@ export default function PaymentSlipPDF({ data, bgImage }) {
     <Document>
       <Page size="A4" style={{ margin: 0, padding: 0 }}>
         <View style={{ width: P(210), height: P(297) }}>
-          {bgImage && (
-            <Image src={bgImage} style={{ width: P(210), height: P(296) }} />
-          )}
+          <Image
+            src={bgImage || '/letter_head.png'}
+            style={{ position: 'absolute', left: bgLeft, top: bgTop, width: bgWidth, height: bgHeight }}
+          />
 
           <View style={{
             position: 'absolute',
