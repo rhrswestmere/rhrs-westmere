@@ -324,6 +324,7 @@ export default function MembersView({ token }) {
         designation: 'Membership Confirmation',
         from_date: today,
         duration: '10:00',
+        member_id: selected.member_id,
       })
       const mod = await loadPdfModule(() => import('../pdfs/AppointmentLetterPDF'))
       const url = await pdfUrl(<mod.default data={apptData} />)
