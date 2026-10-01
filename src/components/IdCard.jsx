@@ -435,18 +435,18 @@ function IdCardForm() {
 function AppointmentForm() {
   const { loading, error, result, submit, reset } = useSubmit('/api/appointments')
   const { pdf, pdfBusy, pdfError, generate, clear } = usePdf()
-  const [form, setForm] = useState({ full_name: '', designation: 'Office Meeting', from_date: '', duration: '10:00' })
+  const [form, setForm] = useState({ full_name: '', designation: 'Office Meeting', from_date: '', duration: '10:00', member_id: '' })
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const data = await submit(form)
+    const data = await submit({ ...form, member_id: form.member_id.trim() })
     if (data) generate(() => import('../pdfs/AppointmentLetterPDF'), data, '/letter_head.png')
   }
 
   const handleReset = () => {
     clear()
     reset()
-    setForm({ full_name: '', designation: 'Office Meeting', from_date: '', duration: '10:00' })
+    setForm({ full_name: '', designation: 'Office Meeting', from_date: '', duration: '10:00', member_id: '' })
   }
 
   if (result) {
@@ -476,6 +476,11 @@ function AppointmentForm() {
           <div>
             <Label>Full Name</Label>
             <input type="text" required placeholder="Your name" className="input-field" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
+          </div>
+          <div>
+            <Label>Member ID (ID Card) — Optional</Label>
+            <input type="text" placeholder="RHRS-2026-0035" className="input-field uppercase" value={form.member_id} onChange={(e) => setForm({ ...form, member_id: e.target.value })} />
+            <p className="text-[11px] text-ink-muted mt-1.5">Daalne par appointment letter pe aapki wahi Member ID aayegi, number dono me same rahega. Bhaari na ho to ye field khali chhodein.</p>
           </div>
           <div>
             <Label>Purpose of Visit</Label>

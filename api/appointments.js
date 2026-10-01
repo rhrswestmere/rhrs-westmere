@@ -2,14 +2,6 @@ import { ok, fail, readBody } from './_lib/http.js'
 import { supabase } from './_lib/supabase.js'
 import { nextAppointmentNo } from './_lib/ids.js'
 
-// RHRS-2026-0035 -> RHRS-APT-2026-0035: the member's own number is reused so
-// the appointment letter and the ID card always show the same suffix.
-function appointmentNoForMember(memberId) {
-  const mid = String(memberId || '').trim()
-  if (!/^RHRS-\d{4}-\d{4}$/.test(mid)) return null
-  return mid.replace(/^RHRS-/, 'RHRS-APT-')
-}
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') return fail(res, 405, 'Method not allowed')
 
@@ -19,7 +11,22 @@ export default async function handler(req, res) {
     return fail(res, 400, 'full_name, designation, from_date, duration are required')
   }
 
-  const derived = appointmentNoForMember(member_id)
+  let derived = null
+  const mid = String(member_id || '').trim()
+  if (mid) {
+    if (!/^RHRS-\d{4}-\d{4}$/.test(mid)) {
+      return fail(res, 400, 'Member ID ka format RHRS-YYYY-NNNN hona chahiye')
+    }
+    const { data: member } = await supabase
+      .from('members')
+      .select('member_id')
+      .eq('member_id', mid)
+      .maybeSingle()
+    if (!member) {
+      return fail(res, 400, 'Ye Member ID nahi mili — ID card check karke dobara daalein')
+    }
+    derived = mid.replace(/^RHRS-/, 'RHRS-APT-')
+  }
 
   // Member-linked letter: reuse the member's number. If an appointment with
   // that number already exists it is the same member regenerating the letter,
