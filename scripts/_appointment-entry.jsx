@@ -1,2 +1,6 @@
 export { default } from '../src/pdfs/AppointmentLetterPDF.jsx'
-export { buildAppointmentJson } from '../src/pdfs/appointmentJson.js'
+export {
+  buildAppointmentJson,
+  fmtAppointmentTime,
+  fmtAppointmentDate,
+} from '../src/pdfs/appointmentJson.js'

@@ -92,7 +92,9 @@ function withDefaults(doc) {
       date_of_issue_label: 'DATE OF ISSUE',
       ...appointment,
       appointment_number: number,
-      date_of_issue: fmtIssueDate(appointment.date_of_issue),
+      // Issue date follows the booking, so the letter always matches the
+      // admin panel's "Booked On" column; only falls back to today.
+      date_of_issue: fmtIssueDate(appointment.date_of_issue || doc.created_at),
       visitor: { ...visitor, full_name: name },
       purpose,
       appointment_date: date,
@@ -123,9 +125,10 @@ export function buildAppointmentJson(input = {}) {
     return withDefaults(input)
   }
 
+  const issueSource = clean(input.date_of_issue) || clean(input.created_at)
   const appointment = {
     appointment_number: clean(input.appointment_no ?? input.appointment_number),
-    date_of_issue: clean(input.date_of_issue),
+    date_of_issue: issueSource ? issueSource.split('T')[0] : '',
     visitor: { full_name: clean(input.full_name ?? input.visitor?.full_name) },
     purpose: clean(input.designation ?? input.purpose),
     appointment_date: fmtAppointmentDate(input.from_date ?? input.appointment_date),

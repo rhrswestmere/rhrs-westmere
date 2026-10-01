@@ -329,7 +329,7 @@ export default function MembersView({ token }) {
       const url = await pdfUrl(<mod.default data={apptData} />)
       const link = document.createElement('a')
       link.href = url
-      link.download = `RHRS-APPT-${apptData.appointment_no}.pdf`
+      link.download = `${apptData.appointment_no}.pdf`
       link.click()
       URL.revokeObjectURL(url)
     } catch (err) {

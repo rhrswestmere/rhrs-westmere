@@ -457,7 +457,7 @@ function AppointmentForm() {
         pdf={pdf}
         pdfBusy={pdfBusy}
         error={pdfError}
-        filename={`RHRS-APPT-${result.appointment_no}.pdf`}
+              filename={`${result.appointment_no}.pdf`}
         onReset={handleReset}
       />
     )
@@ -535,7 +535,7 @@ function PaymentForm({ pendingAmount }) {
         pdf={pdf}
         pdfBusy={pdfBusy}
         error={pdfError}
-        filename={`RHRS-RCPT-${result.receipt_no}.pdf`}
+              filename={`${result.receipt_no}.pdf`}
         onReset={handleReset}
       />
     )
