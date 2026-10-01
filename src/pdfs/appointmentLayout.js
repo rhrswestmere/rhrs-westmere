@@ -12,7 +12,7 @@
 
 export const CANVAS = { w: 1190, h: 1671 }
 export const PAGE = { w: 595.28, h: 841.89 } // A4 in pt
-export const LETTERHEAD = { w: 1055, h: 1491 } // public/letter_head.png
+export const LETTERHEAD = { w: 723, h: 1024 } // public/letter_head.png
 
 const r2 = (n) => Math.round(n * 100) / 100
 const SX = PAGE.w / CANVAS.w
