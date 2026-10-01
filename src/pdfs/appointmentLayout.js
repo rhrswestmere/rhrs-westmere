@@ -214,7 +214,9 @@ export const tableRowsOf = (doc) =>
  */
 export const computeLayout = (doc) => {
   const tableRows = tableRowsOf(doc)
-  const scales = [1, 0.97, 0.94, 0.91, 0.88, 0.85, 0.82]
+  // Start at 0.97: at exactly 1.0 react-pdf drops the details-table text (the
+  // row text is never written to the PDF), so the reference size is skipped.
+  const scales = [0.97, 0.94, 0.91, 0.88, 0.85, 0.82]
   let chosen = null
   for (const scale of scales) {
     const pos = attemptLayout(doc, tableRows, scale)

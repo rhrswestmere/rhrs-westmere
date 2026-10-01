@@ -27,7 +27,6 @@ await bundle.close()
 const mod = await import(`${pathToFileURL(bundleFile).href}?v=${Date.now()}`)
 const {
   default: AppointmentLetterPDF,
-  fmtAppointmentTime,
   fmtAppointmentDate,
 } = mod
 const { renderToBuffer, Font } = await import('@react-pdf/renderer')
@@ -47,7 +46,7 @@ const row = {
   full_name: 'WESTMERE TEST',
   designation: 'Membership Enquiry',
   from_date: '2026-09-10',
-  duration: '10:00',
+  duration: '',
   created_at: '2026-09-26T10:15:00.000Z',
 }
 
@@ -57,9 +56,7 @@ const expected = {
   full_name: row.full_name,
   purpose: row.designation,
   appointment_date: fmtAppointmentDate(row.from_date),
-  appointment_time: fmtAppointmentTime(row.duration),
   issue_date: fmtAppointmentDate(row.created_at.split('T')[0]),
-  panel_time: fmtAppointmentTime(row.duration),
 }
 
 const bgImage = `data:image/png;base64,${fs

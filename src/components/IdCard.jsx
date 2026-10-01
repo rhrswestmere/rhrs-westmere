@@ -435,7 +435,7 @@ function IdCardForm() {
 function AppointmentForm() {
   const { loading, error, result, submit, reset } = useSubmit('/api/appointments')
   const { pdf, pdfBusy, pdfError, generate, clear } = usePdf()
-  const [form, setForm] = useState({ full_name: '', designation: 'Office Meeting', from_date: '', duration: '10:00', member_id: '' })
+  const [form, setForm] = useState({ full_name: '', designation: 'Office Meeting', from_date: '', member_id: '' })
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -446,7 +446,7 @@ function AppointmentForm() {
   const handleReset = () => {
     clear()
     reset()
-    setForm({ full_name: '', designation: 'Office Meeting', from_date: '', duration: '10:00', member_id: '' })
+    setForm({ full_name: '', designation: 'Office Meeting', from_date: '', member_id: '' })
   }
 
   if (result) {
@@ -478,11 +478,6 @@ function AppointmentForm() {
             <input type="text" required placeholder="Your name" className="input-field" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
           </div>
           <div>
-            <Label>Member ID (ID Card) — Optional</Label>
-            <input type="text" placeholder="RHRS-2026-0035" className="input-field uppercase" value={form.member_id} onChange={(e) => setForm({ ...form, member_id: e.target.value })} />
-            <p className="text-[11px] text-ink-muted mt-1.5">Daalne par appointment letter pe aapki wahi Member ID aayegi, number dono me same rahega. Bhaari na ho to ye field khali chhodein.</p>
-          </div>
-          <div>
             <Label>Purpose of Visit</Label>
             <select className="input-field" value={form.designation} onChange={(e) => setForm({ ...form, designation: e.target.value })}>
               <option>Office Meeting</option><option>Membership Enquiry</option><option>Seva Proposal</option>
@@ -495,10 +490,11 @@ function AppointmentForm() {
               <input type="date" required className="input-field" value={form.from_date} onChange={(e) => setForm({ ...form, from_date: e.target.value })} />
             </div>
             <div>
-              <Label>Appointment Time</Label>
-              <input type="time" required className="input-field" value={form.duration} onChange={(e) => setForm({ ...form, duration: e.target.value })} />
+              <Label>Member ID (ID Card)</Label>
+              <input type="text" required placeholder="RHRS-2026-0035" className="input-field uppercase" value={form.member_id} onChange={(e) => setForm({ ...form, member_id: e.target.value })} />
             </div>
           </div>
+          <p className="text-[11px] text-ink-muted -mt-1">ID card wali Member ID daalein — appointment letter pe wahi number aayega, dono me same rahega.</p>
           {error && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-sm px-3 py-2">⚠ {error}</p>}
           <button type="submit" className="w-full btn-saffron" disabled={loading}>
             {loading ? 'Generating…' : '▣ Generate Appointment Letter'}

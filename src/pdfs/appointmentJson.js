@@ -30,11 +30,11 @@ export const DEFAULT_STYLE = {
   table_border_color: '#D8D0BD',
 }
 
-const ENGLISH_TEMPLATE = (name, date, time, purpose) =>
-  `This is to certify that Shri/Smt/Kum. ${name} has booked an appointment with Rashtriya Hindu Rakshak Sangh on ${date} at ${time} for the purpose of ${purpose}. This letter is the official proof of the appointment booked, and may be produced at the time of the visit.`
+const ENGLISH_TEMPLATE = (name, date, purpose) =>
+  `This is to certify that Shri/Smt/Kum. ${name} has booked an appointment with Rashtriya Hindu Rakshak Sangh on ${date} for the purpose of ${purpose}. This letter is the official proof of the appointment booked, and may be produced at the time of the visit.`
 
-const HINDI_TEMPLATE = (name, date, time, purpose) =>
-  `प्रमाणित किया जाता है कि श्री/श्रीमती/कुमारी ${name} ने राष्ट्रीय हिन्दू रक्षक संघ में दिनांक ${date} को प्रातः/समय ${time} बजे ${purpose} हेतु मुलाकात का अपॉइंटमेंट बुक किया है। यह पत्र इस बात का आधिकारिक प्रमाण है कि उपरोक्त तिथि एवं समय पर अपॉइंटमेंट लिया गया है।`
+const HINDI_TEMPLATE = (name, date, purpose) =>
+  `प्रमाणित किया जाता है कि श्री/श्रीमती/कुमारी ${name} ने राष्ट्रीय हिन्दू रक्षक संघ में दिनांक ${date} को ${purpose} हेतु मुलाकात का अपॉइंटमेंट बुक किया है। यह पत्र इस बात का आधिकारिक प्रमाण है कि उपरोक्त तिथि पर अपॉइंटमेंट लिया गया है।`
 
 const clean = (value) => (value == null ? '' : String(value).trim())
 
@@ -70,8 +70,7 @@ function derivedTable(appointment) {
     { label: 'APPOINTMENT NO.', value: appointment.appointment_number },
     { label: 'FULL NAME', value: appointment.visitor?.full_name },
     { label: 'PURPOSE OF VISIT', value: appointment.purpose },
-    { label: 'APPOINTMENT DATE', value: appointment.appointment_date },
-    { label: 'APPOINTMENT TIME', value: appointment.appointment_time },
+    { label: 'DATE OF ISSUE', value: fmtAppointmentDate(appointment.date_of_issue) },
   ].map((row) => ({ label: row.label, value: clean(row.value) }))
 }
 
@@ -101,8 +100,8 @@ function withDefaults(doc) {
       appointment_time: time,
     },
     confirmation_text: doc.confirmation_text || {
-      english: ENGLISH_TEMPLATE(name, date, time, purpose),
-      hindi: HINDI_TEMPLATE(name, date, time, purpose),
+      english: ENGLISH_TEMPLATE(name, date, purpose),
+      hindi: HINDI_TEMPLATE(name, date, purpose),
     },
     appointment_details_table: doc.appointment_details_table?.length
       ? doc.appointment_details_table.map((row) => ({
@@ -142,13 +141,11 @@ export function buildAppointmentJson(input = {}) {
       english: ENGLISH_TEMPLATE(
         name,
         appointment.appointment_date,
-        appointment.appointment_time,
         appointment.purpose,
       ),
       hindi: HINDI_TEMPLATE(
         name,
         appointment.appointment_date,
-        appointment.appointment_time,
         appointment.purpose,
       ),
     },

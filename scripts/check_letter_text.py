@@ -34,10 +34,6 @@ for bad in ("RHRS-APPT-", "RHRS-RCPT-", "undefined", "NaN", "Invalid Date"):
     if bad in flat:
         failures.append(f"forbidden token on letter: {bad}")
 
-# 4. panel formatting equals letter formatting for the time
-if expected["panel_time"] not in flat:
-    failures.append(f"panel time '{expected['panel_time']}' missing on letter")
-
 print("--- extracted letter text ---")
 print(flat)
 print("--- checks ---")

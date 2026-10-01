@@ -6,27 +6,29 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return fail(res, 405, 'Method not allowed')
 
   const body = await readBody(req)
-  const { full_name, designation, from_date, duration, member_id } = body
-  if (!full_name || !designation || !from_date || !duration) {
-    return fail(res, 400, 'full_name, designation, from_date, duration are required')
+  const { full_name, designation, from_date, member_id } = body
+  if (!full_name || !designation || !from_date) {
+    return fail(res, 400, 'full_name, designation, from_date are required')
   }
+  const duration = String(body.duration || '')
 
-  let derived = null
   const mid = String(member_id || '').trim()
-  if (mid) {
-    if (!/^RHRS-\d{4}-\d{4}$/.test(mid)) {
-      return fail(res, 400, 'Member ID ka format RHRS-YYYY-NNNN hona chahiye')
-    }
-    const { data: member } = await supabase
-      .from('members')
-      .select('member_id')
-      .eq('member_id', mid)
-      .maybeSingle()
-    if (!member) {
-      return fail(res, 400, 'Ye Member ID nahi mili — ID card check karke dobara daalein')
-    }
-    derived = mid.replace(/^RHRS-/, 'RHRS-APT-')
+  if (!mid) {
+    return fail(res, 400, 'Member ID (ID card wali) zaroori hai')
   }
+  let derived = null
+  if (!/^RHRS-\d{4}-\d{4}$/.test(mid)) {
+    return fail(res, 400, 'Member ID ka format RHRS-YYYY-NNNN hona chahiye')
+  }
+  const { data: member } = await supabase
+    .from('members')
+    .select('member_id')
+    .eq('member_id', mid)
+    .maybeSingle()
+  if (!member) {
+    return fail(res, 400, 'Ye Member ID nahi mili — ID card check karke dobara daalein')
+  }
+  derived = mid.replace(/^RHRS-/, 'RHRS-APT-')
 
   // Member-linked letter: reuse the member's number. If an appointment with
   // that number already exists it is the same member regenerating the letter,

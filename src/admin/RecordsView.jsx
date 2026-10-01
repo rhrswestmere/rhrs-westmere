@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { getRecords } from './api'
-import { fmtAppointmentTime } from '../pdfs/appointmentJson'
 
 const fmtDate = (iso) =>
   iso ? new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'
@@ -82,8 +81,8 @@ export default function RecordsView({ token }) {
       <Section
         title="Recent Appointments"
         rows={appointments}
-        headers={['Appt. No.', 'Name', 'Purpose', 'Time', 'Booked On']}
-        render={(r) => [r.appointment_no, r.full_name, r.designation, fmtAppointmentTime(r.duration), fmtDate(r.created_at)]}
+        headers={['Appt. No.', 'Name', 'Purpose', 'Date', 'Booked On']}
+        render={(r) => [r.appointment_no, r.full_name, r.designation, fmtDate(r.from_date), fmtDate(r.created_at)]}
       />
       <Section
         title="Recent Payments (Slips)"
