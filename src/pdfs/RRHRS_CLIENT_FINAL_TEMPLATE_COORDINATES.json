@@ -1,86 +1,338 @@
 {
-  "template_version": "client_final_v1",
+  "template_version": "client_final_v2",
   "status": "FINAL_TEMPLATE_DO_NOT_CHANGE_LAYOUT",
+
+  "source": {
+    "front": "RHRS_F.png (1094 x 644)",
+    "back": "RHRS_B.png (1094 x 726)",
+    "mapping": "rhrs.json (2026-10-01)",
+    "note": "Dynamic rects are measured on RHRS_F.png in canvas px (top-left origin). The renderer scales them per-axis onto the 85 x 55 mm page, exactly like the background artwork (scale_x = render_width / 1094, scale_y = render_height / 644), so text, photo and QR stay locked to the printed boxes."
+  },
+
+  "template": {
+    "name": "RHRS_MEMBER_ID_CARD",
+    "canvas": {
+      "width": 1094,
+      "height": 644,
+      "unit": "px",
+      "origin": "top-left",
+      "background": "#F8F5E8"
+    },
+    "coordinate_system": {
+      "x": "increases from left to right",
+      "y": "increases from top to bottom",
+      "reference_width": 1094,
+      "reference_height": 644,
+      "scaling": {
+        "scale_x": "render_width / 1094",
+        "scale_y": "render_height / 644"
+      }
+    }
+  },
+
   "coordinate_system": {
     "origin": "top-left",
     "unit": "pixels",
     "front_reference_size": {
-      "width": 765,
-      "height": 475
+      "width": 1094,
+      "height": 644
     },
     "back_reference_size": {
-      "width": 762,
-      "height": 477
+      "width": 1094,
+      "height": 726
     },
-    "note": "Coordinates are measured against the supplied final reference images. Only front-side fields are dynamic."
+    "note": "Coordinates are measured against the supplied final reference images (RHRS_F.png / RHRS_B.png). Only front-side fields are dynamic."
   },
+
+  "static_elements": {
+    "main_red_header": {
+      "type": "rectangle",
+      "x": 0,
+      "y": 0,
+      "width": 1094,
+      "height": 140,
+      "color": "#C90000",
+      "note": "Already part of background. Do not redraw if using background image."
+    },
+    "main_blue_navigation_bar": {
+      "type": "rectangle",
+      "x": 0,
+      "y": 140,
+      "width": 1094,
+      "height": 59,
+      "color": "#06245B"
+    },
+    "organization_logo": {
+      "type": "image",
+      "x": 3,
+      "y": 0,
+      "width": 222,
+      "height": 215,
+      "position": "left-top"
+    },
+    "organization_title": {
+      "type": "text",
+      "text": "RASHTRIYA HINDU RAKSHAK SANGH (RHRS)",
+      "x": 218,
+      "y": 17,
+      "width": 755,
+      "height": 54,
+      "font_size": 36,
+      "font_weight": "bold",
+      "font_family": "sans-serif",
+      "color": "#FFFFFF",
+      "text_align": "center",
+      "vertical_align": "middle"
+    },
+    "slogan": {
+      "type": "text",
+      "text": "धर्मो रक्षति रक्षितः",
+      "x": 310,
+      "y": 76,
+      "width": 490,
+      "height": 45,
+      "font_size": 31,
+      "font_weight": "bold",
+      "font_family": "serif",
+      "color": "#FFD91A",
+      "text_align": "center",
+      "vertical_align": "middle"
+    },
+    "slogan_left_decoration": {
+      "type": "decorative_line",
+      "x": 295,
+      "y": 99,
+      "width": 115,
+      "height": 10,
+      "color": "#FFD91A"
+    },
+    "slogan_right_decoration": {
+      "type": "decorative_line",
+      "x": 690,
+      "y": 99,
+      "width": 115,
+      "height": 10,
+      "color": "#FFD91A"
+    },
+    "temple_top_right": {
+      "type": "image",
+      "x": 938,
+      "y": 25,
+      "width": 153,
+      "height": 108,
+      "fit": "contain"
+    },
+    "navigation": {
+      "type": "navigation_bar",
+      "x": 0,
+      "y": 140,
+      "width": 1094,
+      "height": 59,
+      "items": [
+        { "text": "धर्म", "x": 250, "y": 148, "width": 105, "height": 43, "font_size": 29, "font_weight": "bold", "color": "#FFFFFF", "align": "center" },
+        { "text": "संस्कृति", "x": 408, "y": 148, "width": 140, "height": 43, "font_size": 29, "font_weight": "bold", "color": "#FFFFFF", "align": "center" },
+        { "text": "समाज", "x": 580, "y": 148, "width": 110, "height": 43, "font_size": 29, "font_weight": "bold", "color": "#FFFFFF", "align": "center" },
+        { "text": "राष्ट्र", "x": 755, "y": 148, "width": 110, "height": 43, "font_size": 29, "font_weight": "bold", "color": "#FFFFFF", "align": "center" }
+      ],
+      "separators": [
+        { "x": 376, "y": 151, "width": 5, "height": 38, "color": "#FFE000" },
+        { "x": 567, "y": 151, "width": 5, "height": 38, "color": "#FFE000" },
+        { "x": 738, "y": 151, "width": 5, "height": 38, "color": "#FFE000" }
+      ]
+    },
+    "lotus_bottom_left": {
+      "type": "image",
+      "x": 0,
+      "y": 477,
+      "width": 359,
+      "height": 112,
+      "fit": "contain"
+    },
+    "official_seal": {
+      "type": "image",
+      "x": 720,
+      "y": 451,
+      "width": 183,
+      "height": 119,
+      "fit": "contain"
+    },
+    "signature": {
+      "type": "image",
+      "x": 720,
+      "y": 500,
+      "width": 175,
+      "height": 69,
+      "fit": "contain"
+    },
+    "bottom_footer": {
+      "type": "rectangle",
+      "x": 0,
+      "y": 587,
+      "width": 1094,
+      "height": 57,
+      "color": "#06245B"
+    },
+    "footer_left_yellow_line": {
+      "type": "line",
+      "x": 34,
+      "y": 620,
+      "width": 108,
+      "height": 4,
+      "color": "#FFE000"
+    },
+    "footer_right_yellow_line": {
+      "type": "line",
+      "x": 955,
+      "y": 620,
+      "width": 108,
+      "height": 4,
+      "color": "#FFE000"
+    },
+    "footer_head_office": {
+      "type": "text",
+      "text": "HEAD OFFICE :",
+      "x": 155,
+      "y": 603,
+      "width": 215,
+      "height": 35,
+      "font_size": 27,
+      "font_weight": "bold",
+      "color": "#FFE000",
+      "text_align": "left"
+    },
+    "footer_organization": {
+      "type": "text",
+      "text": "RHRS RASHTRIYA HINDU RAKSHAK SANGH",
+      "x": 391,
+      "y": 603,
+      "width": 550,
+      "height": 35,
+      "font_size": 26,
+      "font_weight": "bold",
+      "color": "#FFFFFF",
+      "text_align": "left"
+    }
+  },
+
+  "field_labels": {
+    "name_label": { "text": "Name", "x": 30, "y": 226, "width": 175, "height": 40, "font_size": 31, "font_weight": "bold", "color": "#111111" },
+    "designation_label": { "text": "Designation", "x": 30, "y": 279, "width": 205, "height": 40, "font_size": 31, "font_weight": "bold", "color": "#111111" },
+    "contact_label": { "text": "Contact", "x": 30, "y": 332, "width": 175, "height": 40, "font_size": 31, "font_weight": "bold", "color": "#111111" },
+    "blood_group_label": { "text": "Blood Group", "x": 30, "y": 385, "width": 210, "height": 40, "font_size": 31, "font_weight": "bold", "color": "#111111" },
+    "valid_upto_label": { "text": "Valid Upto", "x": 30, "y": 438, "width": 205, "height": 40, "font_size": 31, "font_weight": "bold", "color": "#111111" }
+  },
+
+  "colon_positions": {
+    "name": { "x": 237, "y": 226, "width": 12, "height": 40 },
+    "designation": { "x": 237, "y": 279, "width": 12, "height": 40 },
+    "contact": { "x": 237, "y": 332, "width": 12, "height": 40 },
+    "blood_group": { "x": 237, "y": 385, "width": 12, "height": 40 },
+    "valid_upto": { "x": 237, "y": 438, "width": 12, "height": 40 }
+  },
+
   "dynamic_fields": {
     "front": {
-      "photo": {
-        "type": "image",
-        "x": 626,
-        "y": 164,
-        "width": 111,
-        "height": 145,
-        "fit": "cover",
-        "source": "member.photo"
-      },
       "name": {
         "type": "text",
-        "x": 157,
-        "y": 173,
-        "width": 451,
-        "height": 27,
-        "source": "member.name",
-        "anchor": "left"
+        "x": 253,
+        "y": 224,
+        "width": 575,
+        "height": 43,
+        "font_size": 30,
+        "font_weight": "bold",
+        "font_family": "Arial",
+        "color": "#111111",
+        "text_align": "left",
+        "vertical_align": "middle",
+        "max_lines": 1,
+        "source": "member.name"
       },
       "designation": {
         "type": "text",
-        "x": 157,
-        "y": 209,
-        "width": 451,
-        "height": 27,
-        "source": "member.designation",
-        "anchor": "left"
+        "x": 253,
+        "y": 277,
+        "width": 575,
+        "height": 43,
+        "font_size": 30,
+        "font_weight": "bold",
+        "font_family": "Arial",
+        "color": "#111111",
+        "text_align": "left",
+        "vertical_align": "middle",
+        "max_lines": 1,
+        "source": "member.designation"
       },
       "contact": {
         "type": "text",
-        "x": 157,
-        "y": 245,
-        "width": 451,
-        "height": 27,
-        "source": "member.mobile",
-        "anchor": "left"
+        "x": 253,
+        "y": 330,
+        "width": 575,
+        "height": 43,
+        "font_size": 30,
+        "font_weight": "bold",
+        "font_family": "Arial",
+        "color": "#111111",
+        "text_align": "left",
+        "vertical_align": "middle",
+        "max_lines": 1,
+        "source": "member.mobile"
       },
       "blood_group": {
         "type": "text",
-        "x": 157,
-        "y": 281,
-        "width": 451,
-        "height": 27,
-        "source": "member.blood_group",
-        "anchor": "left"
+        "x": 253,
+        "y": 383,
+        "width": 575,
+        "height": 43,
+        "font_size": 30,
+        "font_weight": "bold",
+        "font_family": "Arial",
+        "color": "#111111",
+        "text_align": "left",
+        "vertical_align": "middle",
+        "max_lines": 1,
+        "source": "member.blood_group"
       },
       "valid_upto": {
         "type": "text",
-        "x": 157,
-        "y": 317,
-        "width": 451,
-        "height": 27,
+        "x": 253,
+        "y": 436,
+        "width": 575,
+        "height": 43,
+        "font_size": 30,
+        "font_weight": "bold",
+        "font_family": "Arial",
+        "color": "#111111",
+        "text_align": "left",
+        "vertical_align": "middle",
+        "max_lines": 1,
         "source": "member.valid_upto",
-        "anchor": "left",
         "format": "DD/MM/YYYY",
         "calculation": "issue_date + 1 calendar year"
       },
+      "photo": {
+        "type": "image",
+        "x": 882,
+        "y": 214,
+        "width": 188,
+        "height": 199,
+        "fit": "cover",
+        "object_position": "center",
+        "border_radius": 12,
+        "clip_to_frame": true,
+        "source": "member.photo"
+      },
       "qr": {
         "type": "qr",
-        "x": 654,
-        "y": 316,
-        "width": 84,
-        "height": 106,
-        "source": "member.verification_url",
+        "x": 930,
+        "y": 432,
+        "width": 139,
+        "height": 141,
+        "error_correction": "H",
+        "foreground": "#000000",
+        "background": "#FFFFFF",
+        "quiet_zone": 0,
         "fit": "contain",
-        "quiet_zone": 4
+        "source": "member.verification_url"
       }
     },
     "back": {
@@ -88,32 +340,53 @@
       "note": "No dynamic fields. Preserve the supplied back-side artwork exactly as provided."
     }
   },
-  "member_data_schema": {
-    "name": "string",
-    "designation": "string",
-    "mobile": "string",
-    "blood_group": "string",
-    "photo": "image",
-    "issue_date": "date",
-    "valid_upto": "auto-calculated",
-    "verification_url": "string"
+
+  "dynamic_data_schema": {
+    "name": { "type": "string", "example": "Armaan Adeel" },
+    "designation": { "type": "string", "example": "National Member" },
+    "contact": { "type": "string", "example": "+91 9876543210" },
+    "blood_group": { "type": "string", "example": "O+" },
+    "valid_upto": { "type": "string", "example": "31 December 2027" },
+    "photo": { "type": "image", "description": "Member photograph" },
+    "qr_code": { "type": "string", "description": "Data encoded into QR code" }
   },
-  "static_elements": {
-    "signature": "existing signature in front template — do not modify",
-    "website": "rhrs.co.in",
-    "email": "rashtriyahindurakshaksangh@gmail.com",
-    "all_back_side_content": "static"
-  },
-  "rendering_rules": [
-    "Do not change the final client-approved artwork, layout, dimensions, typography, colors, logo, icons, borders, or static text.",
-    "Do not add Member ID because it is not present as a field on this final template.",
-    "Do not make any back-side field dynamic.",
-    "Photo must be cropped to the photo rectangle without stretching.",
-    "QR must be generated dynamically from member.verification_url and must fit entirely inside the front QR placeholder.",
-    "Valid Upto must be generated as exactly one calendar year after issue_date, not 365 days.",
-    "Keep the existing signature untouched.",
-    "Use the JSON rectangles as the single source of truth for dynamic placement.",
-    "Do not scatter hardcoded coordinates throughout the codebase.",
-    "Before export, validate that text does not overflow its assigned rectangle."
-  ]
+
+  "rendering_rules": {
+    "background": {
+      "use_original_image": true,
+      "preserve_aspect_ratio": false,
+      "position": "0,0",
+      "width": 1094,
+      "height": 644,
+      "note": "Page is 85 x 55 mm; artwork and coordinates are scaled per-axis onto it, so both stretch identically and stay aligned."
+    },
+    "dynamic_text": {
+      "render_after_background": true,
+      "labels_already_exist_in_background": true,
+      "do_not_render_colons": true,
+      "do_not_render_labels": true
+    },
+    "photo": {
+      "render_after_background": true,
+      "do_not_render_photo_border": true,
+      "clip_to_existing_frame": true
+    },
+    "qr": {
+      "render_after_background": true,
+      "do_not_render_qr_border": true
+    },
+    "layer_order": ["background", "dynamic_text", "member_photo", "qr_code"],
+    "rules": [
+      "Do not change the final client-approved artwork, layout, dimensions, typography, colors, logo, icons, borders, or static text.",
+      "Do not add Member ID because it is not present as a field on this final template.",
+      "Do not make any back-side field dynamic.",
+      "Photo must be cropped to the photo rectangle without stretching.",
+      "QR must be generated dynamically from member.verification_url and must fit entirely inside the front QR placeholder.",
+      "Valid Upto must be generated as exactly one calendar year after issue_date, not 365 days.",
+      "Keep the existing signature untouched.",
+      "Use the JSON rectangles as the single source of truth for dynamic placement.",
+      "Do not scatter hardcoded coordinates throughout the codebase.",
+      "Before export, validate that text does not overflow its assigned rectangle."
+    ]
+  }
 }

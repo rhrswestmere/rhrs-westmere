@@ -5,14 +5,16 @@ import coords from './RRHRS_CLIENT_FINAL_TEMPLATE_COORDINATES.json'
 import { P, PAGE_W_MM, PAGE_H_MM, fx, fy, fw, fh, fitValueFontSize } from './idCardData'
 
 /*
-  FRONT artwork: 765 × 475 px  -> PDF page 85 × 55 mm (landscape)
-  BACK artwork:  762 × 477 px  -> PDF page 85 × 55 mm (landscape)
+  FRONT artwork: 1094 × 644 px -> PDF page 85 × 55 mm (landscape)
+  BACK artwork:  1094 × 726 px -> PDF page 85 × 55 mm (landscape)
   All dynamic geometry comes from RRHRS_CLIENT_FINAL_TEMPLATE_COORDINATES.json.
+  Artwork and coordinates are both scaled per-axis onto the page, so they stay aligned.
 */
 
 const F = coords.dynamic_fields.front
+const REF_W = coords.coordinate_system.front_reference_size.width
 
-const VALUE_BASE_PT = 6
+const VALUE_BASE_PT = P(((F.name.font_size || 30) / REF_W) * PAGE_W_MM)
 const VALUE_COLOR = '#111111'
 
 function QRBox({ value, size }) {
@@ -78,7 +80,7 @@ export default function IdCardPDF({ data, assets }) {
 
   return (
     <Document>
-      {/* FRONT — 765 × 475 reference */}
+      {/* FRONT — 1094 × 644 reference */}
       <Page wrap={false} size={[P(PAGE_W_MM), P(PAGE_H_MM)]} style={pg}>
         <View style={root}>
           <Image src={frontSrc} style={bg} />
@@ -121,7 +123,7 @@ export default function IdCardPDF({ data, assets }) {
         </View>
       </Page>
 
-      {/* BACK — 762 × 477 reference, fully static */}
+      {/* BACK — 1094 × 726 reference, fully static */}
       <Page wrap={false} size={[P(PAGE_W_MM), P(PAGE_H_MM)]} style={pg}>
         <View style={root}>
           <Image src={backSrc} style={bg} />
