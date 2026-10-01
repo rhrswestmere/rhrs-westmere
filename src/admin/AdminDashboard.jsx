@@ -21,7 +21,7 @@ export default function AdminDashboard({ token, onLogout }) {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <a href="/letter_head.png" download="RHRS-Letterhead.png" className="text-xs text-white/60 hover:text-saffron-light transition-colors uppercase tracking-wider cursor-pointer" title="Download printable letterhead (A4 PNG)">
+            <a href="/letter_head.png" download="letter head.png" className="text-xs text-white/60 hover:text-saffron-light transition-colors uppercase tracking-wider cursor-pointer" title="Download printable letterhead (A4 PNG)">
               ⬇ Letterhead
             </a>
             <a href="/" className="text-xs text-white/60 hover:text-saffron-light transition-colors uppercase tracking-wider">View Site</a>
