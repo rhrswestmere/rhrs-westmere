@@ -56,6 +56,9 @@ export default function Navbar() {
           <Link to="/#helpline" className="ml-2 px-4 py-2 text-xs font-bold text-white bg-saffron rounded-sm hover:bg-saffron-deep transition-colors uppercase tracking-wider flex items-center gap-1.5">
             ◈ Helpline
           </Link>
+          <Link to="/admin" className="ml-2 px-4 py-2 text-xs font-bold text-saffron border border-saffron/50 rounded-sm hover:bg-saffron hover:text-white transition-colors uppercase tracking-wider">
+            Login
+          </Link>
         </div>
 
         <button
@@ -84,6 +87,7 @@ export default function Navbar() {
             <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="px-4 py-3 text-sm text-white/60 hover:text-saffron-light rounded transition-colors">{l.label}</Link>
           ))}
           <Link to="/#helpline" onClick={() => setOpen(false)} className="mt-2 px-4 py-3 text-sm font-bold text-white bg-saffron text-center rounded-sm">◈ Helpline</Link>
+          <Link to="/admin" onClick={() => setOpen(false)} className="mt-2 px-4 py-3 text-sm font-bold text-saffron border border-saffron/50 text-center rounded-sm">Login</Link>
         </div>
       </div>
     </nav>

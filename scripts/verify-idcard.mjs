@@ -25,7 +25,14 @@ await bundle.close()
 
 const mod = await import(`${pathToFileURL(bundleFile).href}?v=${Date.now()}`)
 const { default: IdCardPDF, buildCardData, validUpto, buildVerificationUrl } = mod
-const { renderToBuffer } = await import('@react-pdf/renderer')
+const { renderToBuffer, Font } = await import('@react-pdf/renderer')
+
+// Same registration pdfUrl() does in the browser (src/pdfs/fonts.js), but with
+// a file path since node resolves src from disk.
+Font.register({
+  family: 'CardValue',
+  fonts: [{ src: path.join(root, 'public/fonts/Inter-Black.ttf'), fontWeight: 900 }],
+})
 
 const dataUri = (file) =>
   `data:image/png;base64,${fs.readFileSync(path.join(root, 'public', file)).toString('base64')}`

@@ -53,16 +53,15 @@ export function buildCardData(member = {}) {
   }
 }
 
-// Font size for a value line: derived from how many characters fit inside the
-// rect width at the base size, so geometry stays JSON-driven.
-export function fitValueFontSize(text, rectWidthPt, base = 6) {
+// Font size for a value line: the largest size at which the text still fits
+// the rect width, so geometry stays JSON-driven. `charWidth` is the average
+// glyph advance as a fraction of the font size (Helvetica ~0.55, Inter Black
+// ~0.65) — pass a higher value for heavier faces so they shrink before
+// overflowing the rectangle.
+export function fitValueFontSize(text, rectWidthPt, base = 6, charWidth = 0.55) {
   const len = String(text || '').length
   if (!len) return base
-  const capacity = rectWidthPt / (0.55 * base)
-  const ratio = len / capacity
-  if (ratio <= 0.6) return base
-  if (ratio <= 0.75) return base - 0.5
-  if (ratio <= 0.9) return base - 1
-  if (ratio <= 1.05) return base - 1.5
-  return Math.max(base - 2, 4)
+  const fitted = rectWidthPt / (charWidth * len)
+  const floor = Math.max(base - 2, 4)
+  return Number(Math.min(base, Math.max(floor, fitted)).toFixed(2))
 }

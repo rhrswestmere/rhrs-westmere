@@ -8,4 +8,10 @@ export const registerFonts = () => {
       { src: '/fonts/NotoSansDevanagari-Bold.ttf', fontWeight: 700 },
     ],
   })
+  // Inter Black — used for the ID card's dynamic values so they read heavier
+  // than the artwork's own headings.
+  Font.register({
+    family: 'CardValue',
+    fonts: [{ src: '/fonts/Inter-Black.ttf', fontWeight: 900 }],
+  })
 }

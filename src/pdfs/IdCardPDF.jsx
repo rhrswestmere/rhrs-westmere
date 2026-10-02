@@ -13,9 +13,18 @@ import { P, PAGE_W_MM, PAGE_H_MM, fx, fy, fw, fh, fitValueFontSize } from './idC
 
 const F = coords.dynamic_fields.front
 const REF_W = coords.coordinate_system.front_reference_size.width
+const BACK_REF_H = coords.coordinate_system.back_reference_size.height
 
 const VALUE_BASE_PT = P(((F.name.font_size || 30) / REF_W) * PAGE_W_MM)
 const VALUE_COLOR = '#111111'
+// Inter Black runs ~0.65 em average advance — wider than Helvetica, so the
+// fit function needs the heavier metric to avoid overflowing the rects.
+const VALUE_CHAR_WIDTH = 0.65
+
+// Back artwork is bled past the page: 4 reference px above and below (mirrors
+// the 4px photo stretch), so the image covers the full trim on both edges.
+const BACK_STRETCH_PX = 4
+const BACK_STRETCH_PT = P((BACK_STRETCH_PX / BACK_REF_H) * PAGE_H_MM)
 
 function QRBox({ value, size }) {
   const qr = useMemo(() => {
@@ -44,7 +53,7 @@ function QRBox({ value, size }) {
 
 function Value({ rect, text }) {
   const widthPt = fw(rect.width)
-  const fontSize = fitValueFontSize(text, widthPt, VALUE_BASE_PT)
+  const fontSize = fitValueFontSize(text, widthPt, VALUE_BASE_PT, VALUE_CHAR_WIDTH)
   return (
     <View
       style={{
@@ -59,9 +68,10 @@ function Value({ rect, text }) {
       <Text
         numberOfLines={1}
         style={{
+          fontFamily: 'CardValue',
           fontSize,
           lineHeight: 1,
-          fontWeight: 700,
+          fontWeight: 900,
           color: VALUE_COLOR,
         }}
       >
@@ -126,7 +136,7 @@ export default function IdCardPDF({ data, assets }) {
       {/* BACK — 1094 × 726 reference, fully static */}
       <Page wrap={false} size={[P(PAGE_W_MM), P(PAGE_H_MM)]} style={pg}>
         <View style={root}>
-          <Image src={backSrc} style={bg} />
+          <Image src={backSrc} style={bgBack} />
         </View>
       </Page>
     </Document>
@@ -136,3 +146,4 @@ export default function IdCardPDF({ data, assets }) {
 const pg = { fontFamily: 'Helvetica', backgroundColor: '#FFFFFF' }
 const root = { width: P(PAGE_W_MM), height: P(PAGE_H_MM), position: 'relative', overflow: 'hidden' }
 const bg = { position: 'absolute', left: 0, top: 0, width: P(PAGE_W_MM), height: P(PAGE_H_MM), objectFit: 'fill' }
+const bgBack = { ...bg, top: -BACK_STRETCH_PT, height: P(PAGE_H_MM) + BACK_STRETCH_PT * 2 }
