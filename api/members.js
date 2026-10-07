@@ -4,6 +4,19 @@ import { nextMemberId } from './_lib/ids.js'
 import { DESIGNATION_QUOTA, padSerial, isValidLevel } from './_lib/designations.js'
 
 export default async function handler(req, res) {
+  if (req.method === 'GET') {
+    // Public member directory (Members page). Active members only, and only
+    // the fields that are safe to publish — no address, blood group or
+    // emergency contact ever leaves the admin API.
+    const { data, error } = await supabase
+      .from('members')
+      .select('member_id, full_name, designation_level, designation_title, designation_number, photo_url, created_at')
+      .eq('is_active', true)
+      .order('created_at', { ascending: true })
+    if (error) return fail(res, 500, error.message)
+    return ok(res, data)
+  }
+
   if (req.method !== 'POST') return fail(res, 405, 'Method not allowed')
 
   const body = await readBody(req)

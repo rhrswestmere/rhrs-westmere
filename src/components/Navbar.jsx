@@ -6,6 +6,7 @@ const links = [
   { label: 'About', to: '/about' },
   { label: 'Services', to: '/services' },
   { label: 'Gallery', to: '/gallery' },
+  { label: 'Members', to: '/members' },
   { label: 'ID Card', to: '/#idcard' },
   { label: 'Donate', to: '/#donate' },
 ]

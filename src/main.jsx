@@ -6,6 +6,7 @@ import App from './App.jsx'
 import AboutPage from './pages/AboutPage.jsx'
 import ServicesPage from './pages/ServicesPage.jsx'
 import GalleryPage from './pages/GalleryPage.jsx'
+import MembersPage from './pages/MembersPage.jsx'
 import VerifyPage from './pages/VerifyPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
 
@@ -38,6 +39,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/about" element={<AboutPage />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/gallery" element={<GalleryPage />} />
+        <Route path="/members" element={<MembersPage />} />
         <Route path="/verify" element={<VerifyPage />} />
         <Route
           path="/admin"

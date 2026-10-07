@@ -41,7 +41,7 @@ export default function Footer() {
           <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="lg:col-span-3">
             <p className="text-xs font-bold text-saffron uppercase tracking-wider mb-4">Quick Links</p>
             <div className="space-y-2">
-              {[{ label: 'Home', to: '/' }, { label: 'About', to: '/about' }, { label: 'Services', to: '/services' }, { label: 'Gallery', to: '/gallery' }, { label: 'Donate', to: '/#donate' }, { label: 'Admin Panel', to: '/admin' }].map((l) => (
+              {[{ label: 'Home', to: '/' }, { label: 'About', to: '/about' }, { label: 'Services', to: '/services' }, { label: 'Gallery', to: '/gallery' }, { label: 'Members', to: '/members' }, { label: 'Donate', to: '/#donate' }, { label: 'Admin Panel', to: '/admin' }].map((l) => (
                 <Link key={l.label} to={l.to} className="block text-xs text-white/35 hover:text-saffron-light transition-colors duration-200">{l.label}</Link>
               ))}
             </div>
