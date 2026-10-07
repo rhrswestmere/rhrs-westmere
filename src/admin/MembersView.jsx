@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState, useRef } from 'react'
-import { searchMembers, toggleMemberStatus, deleteMember, editMember, verifyDesignation } from './api'
+import { searchMembers, toggleMemberStatus, deleteMember, editMember } from './api'
 import { getUploadUrl, uploadToSignedUrl } from './api'
 import { postJSON } from '../lib/api'
 import { DESIGNATION_LEVELS, DESIGNATION_LABELS } from './designations'
@@ -340,31 +340,6 @@ export default function MembersView({ token }) {
     }
   }
 
-  const handleDesignationLetter = async () => {
-    if (!selected) return
-    setPdfBusy(true)
-    setError('')
-    try {
-      const verified = await verifyDesignation(token, selected.id)
-      if (!verified.designation_title) {
-        setError('Member ke paas designation nahi hai')
-        return
-      }
-      const mod = await loadPdfModule(() => import('../pdfs/DesignationAppointmentPDF'))
-      const url = await pdfUrl(<mod.default data={verified} />)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = `RHRS-DESIG-${verified.member_id}.pdf`
-      link.click()
-      URL.revokeObjectURL(url)
-    } catch (err) {
-      console.error('Designation letter failed:', err)
-      setError('Designation letter banane me error: ' + err.message)
-    } finally {
-      setPdfBusy(false)
-    }
-  }
-
   const handleToggleStatus = async (member) => {
     const isActive = member.is_active !== false
     const action = isActive ? 'deactivate' : 'activate'
@@ -520,11 +495,6 @@ export default function MembersView({ token }) {
                             <button onClick={handleAppointmentLetter} disabled={pdfBusy} className="border border-saffron/40 text-saffron text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-sm hover:bg-saffron hover:text-white transition-all cursor-pointer">
                               {pdfBusy ? 'Preparing…' : '▣ Appointment Letter'}
                             </button>
-                            {selected.designation_title && (
-                              <button onClick={handleDesignationLetter} disabled={pdfBusy} className="border border-green-600 text-green-700 text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-sm hover:bg-green-600 hover:text-white transition-all cursor-pointer">
-                                {pdfBusy ? 'Preparing…' : '★ Designation Letter'}
-                              </button>
-                            )}
                           </div>
                           {pdf && (
                             <div className="flex flex-wrap gap-3 items-center mt-3">

@@ -21,10 +21,14 @@ const VALUE_COLOR = '#111111'
 // fit function needs the heavier metric to avoid overflowing the rects.
 const VALUE_CHAR_WIDTH = 0.65
 
-// Back artwork is bled past the page: 4 reference px above and below (mirrors
-// the 4px photo stretch), so the image covers the full trim on both edges.
-const BACK_STRETCH_PX = 4
-const BACK_STRETCH_PT = P((BACK_STRETCH_PX / BACK_REF_H) * PAGE_H_MM)
+// Blank white bands measured in id-back.png (1094 × 726): rows 0–11 at the top
+// and 709–725 at the bottom carry no artwork. Crop them out and scale the
+// remaining 697 rows to the full page height, so the coloured edges of the
+// artwork run right to the card trim with no white sliver.
+const BACK_CROP_TOP_PX = 12
+const BACK_CROP_BOTTOM_PX = 17
+const BACK_CONTENT_H = BACK_REF_H - BACK_CROP_TOP_PX - BACK_CROP_BOTTOM_PX
+const BACK_SCALE_Y = P(PAGE_H_MM) / BACK_CONTENT_H
 
 function QRBox({ value, size }) {
   const qr = useMemo(() => {
@@ -146,4 +150,8 @@ export default function IdCardPDF({ data, assets }) {
 const pg = { fontFamily: 'Helvetica', backgroundColor: '#FFFFFF' }
 const root = { width: P(PAGE_W_MM), height: P(PAGE_H_MM), position: 'relative', overflow: 'hidden' }
 const bg = { position: 'absolute', left: 0, top: 0, width: P(PAGE_W_MM), height: P(PAGE_H_MM), objectFit: 'fill' }
-const bgBack = { ...bg, top: -BACK_STRETCH_PT, height: P(PAGE_H_MM) + BACK_STRETCH_PT * 2 }
+const bgBack = {
+  ...bg,
+  top: Number((-BACK_CROP_TOP_PX * BACK_SCALE_Y).toFixed(2)),
+  height: Number((BACK_REF_H * BACK_SCALE_Y).toFixed(2)),
+}
